@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Management - Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --danger: #ef233c;
+            --success: #2ec4b6;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f6fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .coupon-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .coupon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .coupon-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .coupon-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .coupon-btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .coupon-search-bar {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .coupon-search-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .coupon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .coupon-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .coupon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .coupon-code {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .coupon-status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .coupon-status-active {
+            background-color: rgba(46, 196, 182, 0.1);
+            color: var(--success);
+        }
+
+        .coupon-status-expired {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .coupon-details {
+            margin: 1rem 0;
+        }
+
+        .coupon-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .coupon-detail-label {
+            color: var(--gray);
+        }
+
+        .coupon-detail-value {
+            font-weight: 500;
+        }
+
+        .coupon-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .coupon-action-btn {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            background: none;
+            transition: all 0.2s;
+        }
+
+        .coupon-action-btn:hover {
+            background-color: var(--light);
+        }
+
+        @media (max-width: 768px) {
+            .coupon-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .coupon-search-bar {
+                flex-direction: column;
+            }
+            
+            .coupon-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="coupon-container">
+        <div class="coupon-header">
+            <h1 class="coupon-title">Coupon Management</h1>
+            <button class="coupon-btn btn-primary">+ Add New Coupon</button>
+        </div>
+
+        <div class="coupon-search-bar">
+            <input type="text" class="coupon-search-input" placeholder="Search coupons...">
+            <button class="coupon-btn btn-primary">Search</button>
+        </div>
+
+        <div class="coupon-grid">
+            <!-- Active Coupon Card -->
+            <div class="coupon-card">
+                <div class="coupon-header">
+                    <span class="coupon-code">SUMMER2025</span>
+                    <span class="coupon-status-badge coupon-status-active">Active</span>
+                </div>
+                <div class="coupon-details">
+                    <div class="coupon-detail-row">
+                        <span class="coupon-detail-label">Discount</span>
+                        <span class="coupon-detail-value">25% OFF</span>
+                    </div>
+                    <div class="coupon-detail-row">
+                        <span class="coupon-detail-label">Valid Until</span>
+                        <span class="coupon-detail-value">31 Aug 2025</span>
+                    </div>
+                    <div class="coupon-detail-row">
+                        <span class="coupon-detail-label">Used</span>
+                        <span class="coupon-detail-value">145/500</span>
+                    </div>
+                </div>
+                <div class="coupon-actions">
+                    <button class="coupon-action-btn">✏️ Edit</button>
+                    <button class="coupon-action-btn">🗑️ Delete</button>
+                    <button class="coupon-action-btn">📊 Stats</button>
+                </div>
+            </div>
+
+        
+        </div>
+    </div>
+</body>
+</html>
+
+
+function removeCoupon(id) {
+    console.log("this is our coupon id",id)
+
+    fetch('/removeCoupon',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+
+        body:JSON.stringify({
+            couponId:id
+        })
+
+    }).then((response)=>{
+        if(response.ok){
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Coupon removed successfully',
+                showConfirmButton: true,
+                timer: 1500
+
+                window.location.reload();
+            })
+
+            
+        }
+    })
+}

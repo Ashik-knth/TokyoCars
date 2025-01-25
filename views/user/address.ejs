@@ -1,0 +1,360 @@
+<div class="address-container">
+  <div class="header">
+    <h1>My Addresses</h1>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal" data-bs-whatever="@mdo">Add New Address</button>
+    <br>
+    <br>
+    <% if (success && Object.keys(success).length > 0) { %>
+      <p class="success-message" ><%= success%></p>
+    <% } %>
+  </div>
+   <% if (address && address.length > 0) { %>
+    <% address.forEach(element => { %>
+     
+   
+  
+  <div class="addresses">
+    <!-- Sample Address Card -->
+    <div class="address-card">
+
+      <h3><i class="fa-solid fa-house"></i> Home</h3>
+      <div class="address-details">
+        <i class="fa-solid fa-location-dot"></i><%= element.addressName %><br>
+        <i class="fa-solid fa-phone"></i><%= element.phoneNumber %><br>
+        <i class="fa-solid fa-location-crosshairs"></i><%= element.streetAddress %><br>
+        <i class="fa-solid fa-flag"></i><%= element.country %><br>
+      </div>
+      <div class="card-actions">
+        <button type="button" class="btn btn-primary address-btn-edit" data-bs-toggle="modal" data-bs-target="#editAddressModal" data-bs-whatever="@mdo" data-address-addressName = "<%= element.addressName %>" 
+          data-address-phoneNumber = "<%= element.phoneNumber %> "
+           data-address-streetAddress = "<%= element.streetAddress %>"
+            data-address-country = "<%= element.country %>" 
+            data-address-city = "<%= element.city %>" 
+            data-address-state = "<%= element.state %>"
+             data-address-zipCode = "<%= element.zipCode %>"
+             data-address-id = "<%= element._id %>" >Edit</button>
+        <button class="delete-btn" onclick="confirmDelete('<%= element._id %>')">Delete</button>
+      </div>
+    </div>
+   
+  </div>
+  <% }) %>
+  <% } %>
+</div>
+
+<!-- Modal for Add Address -->
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addAddressLabel">Add New Address</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addAddressForm" action='/add-address' method="post" >
+          <div class="mb-3">
+            <label for="add-address-name" class="col-form-label">Address Name</label>
+            <p id="add-address-error" class="error-message"></p>
+            <input type="text" class="form-control" id="add-address-name" placeholder="e.g., Home, Work" name="addressName">
+          </div>
+          <div class="mb-3">
+            <label for="add-phone-number" class="col-form-label">Phone Number</label>
+            <p id="add-phone-error" class="error-message"></p>
+            <input type="number" class="form-control" id="add-phone-number" placeholder="Enter your phone number" name="phoneNumber">
+          </div>
+          <div class="mb-3">
+            <label for="add-street-address" class="col-form-label">Street Address</label>
+            <p id="add-street-error" class="error-message"></p>
+            <input type="text" class="form-control" id="add-street-address" placeholder="Street address or P.O. box" name="streetAddress">
+          </div>
+          <div class="mb-3">
+            <label for="add-city-name" class="col-form-label">City</label>
+            <p id="add-city-error" class="error-message"></p>
+            <input type="text" class="form-control" id="add-city-name" placeholder="City" name="city">
+          </div>
+          <div class="mb-3">
+            <label for="add-state-name" class="col-form-label">State</label>
+            <p id="add-state-error" class="error-message"></p>
+            <input type="text" class="form-control" id="add-state-name" placeholder="State" name="state">
+          </div>
+          <div class="mb-3">
+            <label for="add-zip-code" class="col-form-label">Zip Code</label>
+            <p id="add-zip-error" class="error-message"></p>
+            <input type="number" class="form-control" id="add-zip-code" placeholder="ZIP Code" name="zipCode">
+          </div>
+          <div class="mb-3">
+            <label for="add-country-name" class="col-form-label">Country</label>
+            <p id="add-country-error" class="error-message"></p>
+            <input type="text" class="form-control" id="add-country-name" placeholder="Country" name="country">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="validateForm('add')">Save Address</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Edit Address -->
+<div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editAddressLabel">Edit Address</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editAddressForm" action="/edit-address" method="post" >
+          <input type="hidden" id="edit-address-id" name="addressId">
+          <div class="mb-3">
+            <label for="edit-address-name" class="col-form-label">Address Name</label>
+            <p id="edit-address-error" class="error-message"></p>
+            <input type="text" class="form-control" id="edit-address-name" placeholder="e.g., Home, Work" name="addressName">
+          </div>
+          <div class="mb-3">
+            <label for="edit-phone-number" class="col-form-label">Phone Number</label>
+            <p id="edit-phone-error" class="error-message"></p>
+            <input type="number" class="form-control" id="edit-phone-number" placeholder="Enter your phone number" name="phoneNumber">
+          </div>
+          <div class="mb-3">
+            <label for="edit-street-address" class="col-form-label">Street Address</label>
+            <p id="edit-street-error" class="error-message"></p>
+            <input type="text" class="form-control" id="edit-street-address" placeholder="Street address or P.O. box" name="streetAddress">
+          </div>
+          <div class="mb-3">
+            <label for="edit-city-name" class="col-form-label">City</label>
+            <p id="edit-city-error" class="error-message"></p>
+            <input type="text" class="form-control" id="edit-city-name" placeholder="City" name="city">
+          </div>
+          <div class="mb-3">
+            <label for="edit-state-name" class="col-form-label">State</label>
+            <p id="edit-state-error" class="error-message"></p>
+            <input type="text" class="form-control" id="edit-state-name" placeholder="State" name="state">
+          </div>
+          <div class="mb-3">
+            <label for="edit-zip-code" class="col-form-label">Zip Code</label>
+            <p id="edit-zip-error" class="error-message"></p>
+            <input type="number" class="form-control" id="edit-zip-code" placeholder="ZIP Code" name="zipCode">
+          </div>
+          <div class="mb-3">
+            <label for="edit-country-name" class="col-form-label">Country</label>
+            <p id="edit-country-error" class="error-message"></p>
+            <input type="text" class="form-control" id="edit-country-name" placeholder="Country" name="country">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="validateForm('edit')">Save Address</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function validateForm(type) {
+    const prefix = type === 'add' ? 'add' : 'edit';
+
+    let isValid = true;
+    const addressName = document.getElementById(`${prefix}-address-name`).value.trim();
+    const phoneNumber = document.getElementById(`${prefix}-phone-number`).value.trim();
+    const streetAddress = document.getElementById(`${prefix}-street-address`).value.trim();
+    const city = document.getElementById(`${prefix}-city-name`).value.trim();
+    const state = document.getElementById(`${prefix}-state-name`).value.trim();
+    const zipCode = document.getElementById(`${prefix}-zip-code`).value.trim();
+    const country = document.getElementById(`${prefix}-country-name`).value.trim();
+
+    const addressError = document.getElementById(`${prefix}-address-error`);
+    const phoneError = document.getElementById(`${prefix}-phone-error`);
+    const streetError = document.getElementById(`${prefix}-street-error`);
+    const cityError = document.getElementById(`${prefix}-city-error`);
+    const stateError = document.getElementById(`${prefix}-state-error`);
+    const zipError = document.getElementById(`${prefix}-zip-error`);
+    const countryError = document.getElementById(`${prefix}-country-error`);
+
+    const addressRegex = /^[A-Za-z0-9\s,.-]+$/;
+    const phoneRegex = /^[0-9]{10,15}$/;
+    const cityRegex = /^[A-Za-z\s]+$/;
+    const stateRegex = /^[A-Za-z\s]+$/;
+    const zipRegex = /^[0-9]{4,10}$/;
+    const countryRegex = /^[A-Za-z\s]+$/;
+
+   
+
+    clearErrors();
+
+    if (!addressName || !addressRegex.test(addressName)) {
+      showError(addressError, 'Invalid Address Name');
+      isValid = false;
+    }
+    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+      showError(phoneError, 'Invalid Phone Number');
+      isValid = false;
+    }
+    if (!streetAddress || !addressRegex.test(streetAddress)) {
+      showError(streetError, 'Invalid Street Address');
+      isValid = false;
+    }
+    if (!city || !cityRegex.test(city)) {
+      showError(cityError, 'Invalid City Name');
+      isValid = false;
+    }
+    if (!state || !stateRegex.test(state)) {
+      showError(stateError, 'Invalid State Name');
+      isValid = false;
+    }
+    if (!zipCode || !zipRegex.test(zipCode)) {
+      showError(zipError, 'Invalid Zip Code');
+      isValid = false;
+    }
+    if (!country || !countryRegex.test(country)) {
+      showError(countryError, 'Invalid Country Name');
+      isValid = false;
+    }
+
+    if (isValid) {
+      const form = document.getElementById(`${type}AddressForm`);
+      form.submit( );
+    }
+  }
+
+  function showError(element, message) {
+      element.innerText = message;
+      element.style.color = 'red';
+      element.style.display = 'block';
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.error-message').forEach(error => {
+        error.innerText = '';
+        error.style.display = 'none';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      console.log('DOM is loaded');
+
+      document.querySelectorAll('.address-btn-edit').forEach(element=>{
+        element.addEventListener('click', ()=>{
+          console.log('Edit button clicked');
+          const addressName = element.getAttribute('data-address-addressName');
+          const phoneNumber = element.getAttribute('data-address-phoneNumber').trim(); 
+          const streetAddress = element.getAttribute('data-address-streetAddress');
+          const city = element.getAttribute('data-address-city');
+          const state = element.getAttribute('data-address-state');
+          const zipCode = element.getAttribute('data-address-zipCode');
+          const country = element.getAttribute('data-address-country');
+          const addressId = element.getAttribute('data-address-id');
+
+          document.getElementById('edit-address-name').value = addressName;
+          document.getElementById("edit-phone-number").value = phoneNumber;
+          document.getElementById('edit-street-address').value = streetAddress;
+          document.getElementById('edit-city-name').value = city;
+          document.getElementById('edit-state-name').value = state;
+          document.getElementById('edit-zip-code').value = zipCode;
+          document.getElementById('edit-country-name').value = country;
+          document.getElementById('edit-address-id').value = addressId;
+        })
+      })
+      
+    })
+
+    // function confirmDelete(addressId){
+    //   $.ajax({
+    //     url: '/delete-address',
+    //     type: 'DELETE',
+    //     data: {addressId},
+    //     success: function(response){
+    //       if(response.success){
+    //         Swal.fire({
+    //           title: 'Success',
+    //           text: response.message,
+    //           icon: 'success',
+    //           confirmButtonText: 'Ok'
+    //         }).then(()=>{
+    //           window.location.reload( response.Redirecturl);
+    //         })
+    //       }else{
+    //         Swal.fire({
+    //           title: 'Error',
+    //           text: response.message,
+    //           icon: 'error',
+    //           confirmButtonText: 'Ok'
+    //         })
+    //       }
+    //     },
+
+    //     error: function(error){
+    //       Swal.fire({
+    //         title: 'Error',
+    //         text: 'Something went wrong',
+    //         icon: 'error',
+    //         confirmButtonText: 'Ok'
+    //       })
+    //     }
+    //   })
+    // }
+
+    function confirmDelete(addressId) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "Do you really want to delete this address",
+    icon: 'warning',
+    showCancelButton: true, 
+    confirmButtonColor: '#3085d6', 
+    cancelButtonColor: '#d33', 
+    confirmButtonText: 'Yes, delete it!', 
+    cancelButtonText: 'Cancel', 
+  }).then((result) => {
+    if (result.isConfirmed) {
+
+      $.ajax({
+        url: '/delete-address',
+        type: 'POST',
+        data: { addressId },
+        success: function (response) {
+          if (response.success) {
+            Swal.fire({
+              title: 'Success',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'Ok',
+            }).then(() => {
+              window.location.reload(response.Redirecturl);
+            });
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: response.message,
+              icon: 'error',
+              confirmButtonText: 'Ok',
+            });
+          }
+        },
+        error: function (error) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Something went wrong',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+          });
+        },
+      });
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      Swal.fire({
+        title: 'Cancelled',
+        text: 'Your address was not deleted.',
+        icon: 'info',
+        confirmButtonText: 'Ok',
+      });
+    }
+  });
+}
+
+
+
+
+    
+</script>

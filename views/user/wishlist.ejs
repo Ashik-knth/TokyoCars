@@ -1,0 +1,85 @@
+<section id="wishlist-header" class="about-header">
+    <h2>♡ WISHLIST</h2>
+    <p>Add Your Favorite , Products!</p>
+</section>
+
+<section id="cart" class="section-p1">
+    <table width="100%">
+        <thead>
+            <tr>
+                <td>Remove</td>
+                <td>Image</td>
+                <td>Product</td>
+                <td>Price</td>
+                <td>Stock</td>
+            </tr>
+        </thead>
+        <% if (wishlist && wishlist.items.length > 0) { %>
+            <% wishlist.items.forEach(element => { %>
+            <tbody>
+                <tr>
+                    <td><i class='bx bx-x-circle' onclick="removeFromWishlist('<%= element.product._id %>')"></i></td>
+                    <td><img src="/uploads/<%= element.product.productImage[0] %>" alt="wishlist image"></td>
+                    <td><%= element.product.productName %></td>
+                    <td><%= element.product.regularPrice %></td>
+                    <% if (element.product.stock === 0) { %>
+                        <td><p>out of stock</p></td>
+                    <% } else { %>
+                        <td><p>in stock</p></td>
+                    <% } %>
+                </tr>
+            </tbody>
+            <% }) %>
+        <% } else { %>
+            <tbody>
+                <tr>
+                    <td colspan="5" class="empty-wishlist">Your wishlist is Empty</td>
+                </tr>
+            </tbody>
+        <% } %>
+    </table>
+   
+</section>
+
+
+
+<script>
+
+
+
+function removeFromWishlist(productId) {
+    fetch('/removeFromWishlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            productId: productId
+        })
+    }).then(response => {
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Product removed from wishlist',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Product removal failed',
+                text: 'Please try again',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    })
+}
+
+
+
+
+
+</script>

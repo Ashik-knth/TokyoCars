@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Product</title>
+    <link rel="stylesheet" href="/admin/css/addproduct.css">
+    <link rel="stylesheet" href="/admin/css/product.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <style>
+        .image-box {
+            width: 200px;
+            height: 200px;
+            border: 2px dashed #ccc;
+            margin: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+
+        .containers {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #cropArea {
+            max-width: 500px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        #imageForCrop {
+            max-width: 100%;
+        }
+
+        .buttons {
+            margin: 10px 0;
+        }
+
+        .button-group button {
+            margin-right: 10px;
+        }
+       
+        .color-danger{
+            color: red;
+            font-weight: bold;
+            font-size: 15px;
+            margin: 10px 0;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Add New Product</h1>
+    </div>
+
+    <div class="form-container">
+        <form id="addProductForm" enctype="multipart/form-data" action="/admin/addproduct" method="post">
+            <!-- Product Name -->
+            <div class="form-group">
+                <label class="required">Product Name</label>
+                  <p id="name-error" class="error-message" ></p>
+                <input type="text" id="productName" name="productName"  placeholder="Enter Product Name">
+            </div>
+
+            <!-- Category -->
+            <div class="form-group">
+                <label class="required">Category</label>
+                <p id="category-error" class="error-message"></p>
+                <select id="category" name="category" >
+                    <option value="">Select a category</option>
+                    <% category.forEach(element => { %>
+                        <option value="<%= element.id %>"><%= element.name %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <!-- Price -->
+            <div class="form-group">
+                <label class="required">Price</label>
+                <p id="price-error" class="error-message"></p>
+                <input type="number" id="price" name="regularPrice"  min="0" step="0.01" placeholder="Enter price">
+            </div>
+
+            <!-- Stock -->
+            <div class="form-group">
+                <label class="required">Stock</label>
+                <p id="stock-error" class="error-message"></p>
+                <input type="number" id="stock" name="stock"  min="0" placeholder="Enter stock quantity">
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label class="required">Description</label>
+                <p id="description-error" class="error-message"></p>
+                <textarea id="description" name="description"  placeholder="Enter product description"></textarea>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="containers">
+                 
+                <div class="image-box">
+                    <input type="file" name="productImage" accept="image/*" onchange="loadImageForCrop(this, 1)">
+                    <img id="preview1" class="preview-image">
+                </div>
+
+                <div class="image-box">
+                    <input type="file" name="productImage" accept="image/*" onchange="loadImageForCrop(this, 2)">
+                    <img id="preview2" class="preview-image">
+                </div>
+
+                <div class="image-box">
+                    <input type="file" name="productImage" accept="image/*" onchange="loadImageForCrop(this, 3)">
+                    <img id="preview3" class="preview-image">
+                </div>
+            </div>
+
+            <!-- Crop Area -->
+            <div id="cropArea">
+                <img id="imageForCrop">
+                <div class="buttons">
+                    <button type="button" class="btn btn-primary" onclick="cropImage()">Crop Image</button>
+                    <button type="button" class="btn btn-secondary" onclick="cancelCrop()">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button onclick="ValidateForm(event)" id="addProductButton"  class="btn btn-primary">Add Product</button>
+                <a href="/admin/product"><button type="button"class="btn btn-secondary">Cancel</button></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script>
+    let cropper = null;
+    let currentImageNumber = null;
+
+    function loadImageForCrop(input, imageNumber) {
+        if (input.files && input.files[0]) {
+            currentImageNumber = imageNumber;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('cropArea').style.display = 'block';
+
+                const image = document.getElementById('imageForCrop');
+                image.src = e.target.result;
+
+                if (cropper) {
+                    cropper.destroy();
+                }
+
+                cropper = new Cropper(image, {
+                    aspectRatio: 4 / 3,
+                    viewMode: 1
+                });
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function cropImage() {
+        if (cropper) {
+            const croppedData = cropper.getCroppedCanvas().toDataURL();
+
+            const preview = document.getElementById('preview' + currentImageNumber);
+            preview.src = croppedData;
+            preview.style.display = 'block';
+            cancelCrop();
+        }
+    }
+
+    function cancelCrop() {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        document.getElementById('cropArea').style.display = 'none';
+    }
+    
+   
+
+
+    
+    function ValidateForm(event) {
+    event.preventDefault();
+    console.log("Validating form...");
+    let isValid = true; 
+    clearErrorMessage();
+
+    const productName = document.getElementById("productName")?.value?.trim();
+    const category = document.getElementById("category")?.value?.trim();
+    const price = document.getElementById("price")?.value?.trim();
+    const stock = document.getElementById("stock")?.value?.trim();
+    const description = document.getElementById("description")?.value?.trim();
+    const nameError = document.getElementById("name-error");
+    const categoryError = document.getElementById("category-error");
+    const priceError = document.getElementById("price-error");
+    const stockError = document.getElementById("stock-error");
+    const descriptionError = document.getElementById("description-error");
+    const image1Error = document.getElementById("image1-error");
+    const image2Error = document.getElementById("image2-error");
+    const image3Error = document.getElementById("image3-error");
+
+    if (!productName) {
+        showError(nameError, "Product name is empty");
+        isValid = false;
+    } else if (productName.length < 3) {
+        showError(nameError, "Product name must be at least 3 characters");
+        isValid = false;
+    } else if (productName.length > 50) {
+        showError(nameError, "Product name must be less than 50 characters");
+        isValid = false;
+    } 
+    // } else if (!/^[A-Za-z]+$/.test(productName)) {
+    //     showError(nameError, "Product name must contain only letters and spaces");
+    //     isValid = false;
+    // }
+
+    if (!category) {
+        showError(categoryError, "Category is empty");
+        isValid = false;
+    }
+
+    if (!price) {
+        showError(priceError, "Price is empty");
+        isValid = false;
+    } else if (parseFloat(price) < 0) {
+        showError(priceError, "Price must be greater than 0");
+        isValid = false;
+    }
+
+    if (!stock) {
+        showError(stockError, "Stock is empty");
+        isValid = false;
+    } else if (parseInt(stock) < 0) {
+        showError(stockError, "Stock must be greater than or equal to 0");
+        isValid = false;
+    }
+
+    if (!description) {
+        showError(descriptionError, "Description is empty");
+        isValid = false;
+    }
+
+   console.log(isValid);
+   
+    if (isValid) {
+        console.log("Form is valid");
+        document.getElementById("addProductForm").submit();
+    }
+}
+
+
+
+function showError(element, message) {
+    if (element) {
+        element.textContent = message;
+        element.style.color = "red";
+        element.style.display = "block";
+        element.style.fontSize = "12px";
+    }
+}
+
+function clearErrorMessage() {
+    console.log("Clearing error messages...");
+    const errorMessages = document.querySelectorAll(".error-message");
+    errorMessages.forEach((element) => {
+        element.textContent = "";
+        element.style.display = "none";
+    });
+}
+
+
+  
+
+     
+
+</script>
+</body>
+</html>

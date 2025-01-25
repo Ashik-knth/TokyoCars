@@ -1,0 +1,156 @@
+<div class="order-container">
+    <div class="order-header">
+        <h1 class="order-title">Order Management</h1>
+    </div>
+
+    <div class="order-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Payment Method</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <% orders.forEach((element, index) => { %>
+                <tbody>
+                    <tr>
+                        <td># <%= element.OrderId%></td>
+                        <td><%= element.user.username %></td>
+                        <td><%= element.orderDate.toDateString() %></td>
+                        <td><%= element.payableAmount %></td>
+                        <td>
+                            <span class="order-payment-badge">
+                                <img src="https://i.pinimg.com/736x/a7/06/b6/a706b6aa30d3eb993029e34fb025299d.jpg"
+                                    alt="Credit Card" class="order-payment-icon" />
+                                <%= element.paymentMethod %>
+                            </span>
+                        </td>
+                    
+                        <td>
+                            <a href="/admin/order-details/<%= element._id %>">
+                                <button class="order-btn order-btn-view">View Details</button>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            <% }); %>
+        </table>
+        
+    </div>
+</div>
+
+
+<script>
+
+
+// function handleOptionChange(value, orderId) {
+//     console.log("Value changed to:", value);
+//     console.log("Order ID:", orderId);
+
+//     fetch('/admin/payment-change', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({ 
+//             paymentStatus: value,
+//             orderId: orderId
+//         })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         console.log('Response from server:', data);
+
+//         if (data.success) {  
+//             Swal.fire({
+//                 icon: 'success',
+//                 title: 'Payment Status Updated',
+//                 text: `Order ID ${data.paymentId} updated to : ${value}`,
+//                 showConfirmButton: true
+//             });
+//         } else {
+
+//             Swal.fire({
+//                 icon: 'error',
+//                 title: 'Failed to Update',
+//                 text: data.message || 'An error occurred while updating payment status.',
+//                 showConfirmButton: true
+//             });
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+
+//         Swal.fire({
+//             icon: 'error',
+//             title: 'Network Error',
+//             text: 'Could not connect to the server. Please try again later.',
+//             showConfirmButton: true
+//         });
+//     });
+// }
+
+
+// function handleOrderStatusChange(value, orderId, productName) {
+//     console.log("Value changed to:", value);
+//     console.log("Order ID:", orderId);
+//     console.log("Product Name:", productName);
+
+//     fetch('/admin/status-change', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             orderStatus: value,
+//             orderId: orderId,
+//             productName: productName
+//         })
+//     })
+//     .then(response => {
+//         // Ensure the response is properly parsed
+//         console.log("Raw Response:", response);
+//         return response.json();
+//     })
+//     .then(data => {
+//         console.log('Parsed Response from server:', data);
+
+//         // Check success and show Swal
+//         if (data.success) {
+//             Swal.fire({
+//                 icon: 'success',
+//                 title: data.message || 'Order Status Updated',
+//                 text: `Order ID ${data.orderIds} updated to: ${value}`,
+//                 showConfirmButton: true
+//             });
+//         } else {
+//             Swal.fire({
+//                 icon: 'error',
+//                 title: 'Failed to Update',
+//                 text: data.message || 'An error occurred while updating order status.',
+//                 showConfirmButton: true
+//             });
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+
+//         // Handle network errors
+//         Swal.fire({
+//             icon: 'error',
+//             title: 'Network Error',
+//             text: 'Could not connect to the server. Please try again later.',
+//             showConfirmButton: true
+//         });
+//     });
+// }
+
+
+
+
+
+</script>

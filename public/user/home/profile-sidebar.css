@@ -1,0 +1,87 @@
+.profile-sidebars {
+    width: 280px;
+    background: #ffffff;
+    padding: 20px;
+    height: 80vh;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-sections {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.profile-images {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4a90e2;
+    padding: 3px;
+    margin-bottom: 10px;
+}
+
+.profile-names {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.profile-emails {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.menu-items-profile {
+    list-style: none;
+}
+
+.menu-item-profile a {
+    text-decoration: none;
+    color: #555;
+}
+
+.menu-item-profile {
+    margin-bottom: 8px;
+}
+
+.menu-link-profile {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #555;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.menu-link-profile:hover {
+    background-color: #f0f7ff;
+    color: #4a90e2;
+}
+
+.menu-link-profile i {
+    margin-right: 12px;
+    font-size: 1.2rem;
+    width: 20px;
+    text-align: center;
+}
+
+.actives {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.active:hover {
+    background-color: #357abd;
+    color: white;
+}
+
+a {
+    text-decoration: none;
+
+}

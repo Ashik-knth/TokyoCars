@@ -1,0 +1,645 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .search-bar {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 300px;
+            font-size: 14px;
+        }
+
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .order-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .order-date {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .order-details {
+            margin-bottom: 15px;
+        }
+
+        .order-customer {
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .order-items {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-delivered {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-processing {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+
+            .orders-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Orders Dashboard</h1>
+            <input type="text" class="search-bar" placeholder="Search orders...">
+        </div>
+
+        <div class="orders-grid">
+         
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">#ORD-2024-001</span>
+                    <span class="order-date">Jan 8, 2024</span>
+                </div>
+                <div class="order-details">
+                    <div class="order-customer">John Doe</div>
+                    <div class="order-items">3 items • $145.99</div>
+                </div>
+                <span class="order-status status-delivered">Delivered</span>
+            </div>
+
+     
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">#ORD-2024-002</span>
+                    <span class="order-date">Jan 8, 2024</span>
+                </div>
+                <div class="order-details">
+                    <div class="order-customer">Jane Smith</div>
+                    <div class="order-items">2 items • $89.99</div>
+                </div>
+                <span class="order-status status-processing">Processing</span>
+            </div>
+
+            
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">#ORD-2024-003</span>
+                    <span class="order-date">Jan 8, 2024</span>
+                </div>
+                <div class="order-details">
+                    <div class="order-customer">Mike Johnson</div>
+                    <div class="order-items">1 item • $299.99</div>
+                </div>
+                <span class="order-status status-pending">Pending</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html> -->
+
+
+<!-- THIS IS ORDER PAGE DETAILS  -->
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-number {
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .order-status {
+            background-color: #e6f4ea;
+            color: #1e8e3e;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .info-group h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-group p {
+            color: #333;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .order-items {
+            margin-bottom: 32px;
+        }
+
+        .item {
+            display: flex;
+            padding: 16px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            margin-right: 16px;
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .item-price {
+            color: #666;
+        }
+
+        .order-summary {
+            background-color: #f8f9fa;
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid #ddd;
+            padding-top: 12px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .cancel-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .cancel-button:hover {
+            background-color: #c82333;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .item {
+                flex-direction: column;
+            }
+
+            .item-image {
+                margin-bottom: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="order-number">Order #12345</h1>
+            <span class="order-status">In Progress</span>
+        </div>
+
+        <div class="order-info">
+            <div class="info-group">
+                <h3>Order Date</h3>
+                <p>January 8, 2025</p>
+            </div>
+            <div class="info-group">
+                <h3>Shipping Address</h3>
+                <p>123 Main Street<br>Anytown, ST 12345</p>
+            </div>
+            <div class="info-group">
+                <h3>Payment Method</h3>
+                <p>VISA ending in 4242</p>
+            </div>
+        </div>
+
+        <div class="order-items">
+            <div class="item">
+                <div class="item-image"></div>
+                <div class="item-details">
+                    <h3 class="item-name">Product Name</h3>
+                    <p class="item-price">$99.99</p>
+                    <p>Quantity: 1</p>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-image"></div>
+                <div class="item-details">
+                    <h3 class="item-name">Another Product</h3>
+                    <p class="item-price">$149.99</p>
+                    <p>Quantity: 2</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-summary">
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>$399.97</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span>$9.99</span>
+            </div>
+            <div class="summary-row">
+                <span>Tax</span>
+                <span>$32.00</span>
+            </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span>$441.96</span>
+            </div>
+        </div>
+
+        <button class="cancel-button">Cancel Order</button>
+    </div>
+</body>
+</html> -->
+
+
+<!-- JUST RESET PASSWORD PAGE OPTION -->
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 28px;
+            margin-bottom: 24px;
+            color: #2d3748;
+        }
+
+        .orders-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-collapse: collapse;
+            overflow: hidden;
+        }
+
+        .orders-table th {
+            background-color: #f8f9fa;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #edf2f7;
+        }
+
+        .orders-table td {
+            padding: 16px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .orders-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-delivered {
+            background-color: #e6f4ea;
+            color: #1e8e3e;
+        }
+
+        .status-processing {
+            background-color: #fff4e5;
+            color: #ff9800;
+        }
+
+        .status-cancelled {
+            background-color: #feecea;
+            color: #dc3545;
+        }
+
+        .payment-paid {
+            color: #1e8e3e;
+            font-weight: 500;
+        }
+
+        .payment-pending {
+            color: #ff9800;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-details {
+            background-color: #3182ce;
+            color: white;
+        }
+
+        .btn-details:hover {
+            background-color: #2c5282;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+
+        .btn-disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 1024px) {
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 24px;
+            }
+
+            .status-badge {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">My Orders</h1>
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Payment Method</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th>Payment Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#ORD001</td>
+                    <td>Jan 8, 2025</td>
+                    <td>Credit Card</td>
+                    <td>$299.99</td>
+                    <td><span class="status-badge status-delivered">Delivered</span></td>
+                    <td><span class="payment-paid">Paid</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-details">Details</button>
+                            <button class="btn btn-disabled">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>#ORD002</td>
+                    <td>Jan 7, 2025</td>
+                    <td>PayPal</td>
+                    <td>$149.99</td>
+                    <td><span class="status-badge status-processing">Processing</span></td>
+                    <td><span class="payment-paid">Paid</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-details">Details</button>
+                            <button class="btn btn-cancel">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>#ORD003</td>
+                    <td>Jan 6, 2025</td>
+                    <td>Debit Card</td>
+                    <td>$599.99</td>
+                    <td><span class="status-badge status-cancelled">Cancelled</span></td>
+                    <td><span class="payment-pending">Refund Pending</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-details">Details</button>
+                            <button class="btn btn-disabled">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html> -->
+
+

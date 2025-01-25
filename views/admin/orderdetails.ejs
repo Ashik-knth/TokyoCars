@@ -1,0 +1,335 @@
+<div class="order-detail-container">
+
+    <div class="order-detail-header">
+        <h1 class="order-detail-number">Order # <%= order.OrderId %>
+        </h1>
+
+    </div>
+
+    <div class="order-detail-info">
+        <div class="order-detail-info-group">
+            <h3>Order Date</h3>
+            <p>
+                <%= order.orderDate.toDateString() %>
+            </p>
+        </div>
+        <div class="order-detail-info-group">
+            <h3>Shipping Address</h3>
+            <p>
+                <%= order.address.addressName%><br>
+                    <%= order.address.streetAddress %>
+            </p>
+        </div>
+        <div class="order-detail-info-group">
+            <h3>
+                <%= order.paymentMethod %>
+            </h3>
+            <!-- <p>VISA ending in 4242</p> -->
+        </div>
+    </div>
+
+    <div class="order-detail-items">
+
+        <% order.items.forEach((element, index)=> { %>
+
+
+
+            <div class="order-detail-item">
+
+                <img src="/uploads/<%= element.product.productImage[0] %>" alt="Product"
+                    class="order-detail-item-image">
+                <div class="order-detail-item-details">
+
+                    <h3 class="order-detail-item-name">
+                        <%= element.product.productName %>
+                    </h3>
+                    <p class="order-detail-item-price"> Product Price : ₹<%= element.product.regularPrice %></p>
+                    <p>Quantity: <%= element.quantity %></p>
+
+                    <p class="order-detail-item-price" >Payment Method : <%= order.paymentMethod %></p>
+                    <br>
+
+                    <p>Payment Status Update:</p>
+
+                    <select class="payment-status-select"
+                        onchange="handleOptionChange(this.value, '<%= order._id %>', '<%= element.product._id %>')">
+                        <option selected>
+                            <%= element.PaymentStatus %>
+                        </option>
+                        <option value="Paid">Paid</option>
+                        <option value="Failed">Failed</option>
+                        <option value="Refunded">Refunded</option>
+                    </select>
+
+                    <span class="order-detail-status">
+                        <%= element.PaymentStatus %>
+                    </span>
+
+                    <br>
+
+                    <br>
+
+
+                    <p>
+                        <%= element.isReturnRequested==true ? 'Return Status Update' : 'Order Status Update' %>
+                    </p>
+
+
+                    <% if (element.isReturnRequested==true) { %>
+
+                        <select class="order-status-select"
+                            onchange="handleReturnStatusChange(this.value, '<%= order._id %>', '<%= element.product._id %>')">
+                            <option value="<%= element.isAdminAcceptedReturn %>"
+                                <%=element.isAdminAcceptedReturn==='Pending' ? 'selected' : '' %>>
+                                <%= element.isAdminAcceptedReturn%>
+                            </option>
+
+                            <option value="Accepted">Accepted</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+
+
+
+                        <% } else{ %>
+
+
+                            <select class="order-status-select"
+                                onchange="handleOrderStatusChange(this.value, '<%= order._id %>', '<%= element.product._id %>')">
+                                <option value="<%= element.orderStatus %>" <%=element.orderStatus==='processing'
+                                    ? 'selected' : '' %>>
+                                    <%= element.orderStatus %>
+                                </option>
+
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+
+
+
+                            <% } %>
+
+
+                </div>
+                <span class="order-detail-status">
+               
+                    <%= element.isReturnRequested ? (element.isAdminAcceptedReturn==='Accepted'
+                        ? 'Return Request Accepted' : (element.isAdminAcceptedReturn==='Rejected'
+                        ? 'Return Request Rejected' : 'Return Requested' )) : element.orderStatus %>
+               
+                </span>
+
+            </div>
+
+
+
+            <% }) %>
+                <!-- <div class="order-detail-item">
+            <div class="order-detail-item-image"></div>
+            <div class="order-detail-item-details">
+                <h3 class="order-detail-item-name">Another Product</h3>
+                <p class="order-detail-item-price">$149.99</p>
+                <p>Quantity: 2</p>
+            </div>
+        </div> -->
+    </div>
+
+    <div class="order-detail-summary">
+        <div class="order-detail-summary-row">
+            <span>Subtotal</span>
+            <span>₹<%= order.totalAmount%></span>
+        </div>
+        <div class="order-detail-summary-row">
+            <span>Shipping</span>
+            <span>₹40</span>
+        </div>
+        <!-- <div class="order-detail-summary-row">
+            <span>Tax</span>
+            <span>$32.00</span>
+        </div> -->
+        <div class="order-detail-summary-row">
+            <span>Total</span>
+            <span>₹<%= order.payableAmount %></span>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+<script>
+
+    function handleOptionChange(value, orderId, productId) {
+        console.log("Value changed to:", value);
+        console.log("Order ID:", orderId);
+
+        fetch('/admin/payment-change', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                paymentStatus: value,
+                orderId: orderId,
+                productId: productId
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response from server:', data);
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Payment Status Updated',
+                        text: `Order ID ${data.OrderId} updated to : ${value}`,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    })
+                } else {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed to Update',
+                        text: data.message || 'An error occurred while updating payment status.',
+                        showConfirmButton: true
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: 'Could not connect to the server. Please try again later.',
+                    showConfirmButton: true
+                });
+            });
+    }
+
+
+
+    function handleOrderStatusChange(value, orderId, productId) {
+
+        console.log("Value changed to:", value);
+        console.log("Order ID:", orderId);
+        console.log("Product Name:", productId);
+
+        fetch('/admin/status-change', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+
+                orderStatus: value,
+                orderId: orderId,
+                productId: productId
+            })
+        })
+            .then(response => {
+                console.log("Raw Response:", response);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Parsed Response from server:', data);
+
+                // Check success and show Swal
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message || 'Order Status Updated',
+                        text: `Order ID ${data.orderIds} updated to: ${value}`,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed to Update',
+                        text: data.message || 'An error occurred while updating order status.',
+                        showConfirmButton: true
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+
+                // Handle network errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: 'Could not connect to the server. Please try again later.',
+                    showConfirmButton: true
+                });
+            });
+    }
+
+
+
+
+
+    function handleReturnStatusChange(value, orderId, productId) {
+
+        console.log("Value changed to:", value);
+        console.log("Order ID:", orderId);
+        console.log("Product Name:", productId);
+
+        fetch('/admin/return-status-change', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                orderStatus: value,
+                orderId: orderId,
+                productId: productId
+            })
+        })
+            .then(response => {
+                console.log("Raw Response:", response);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Parsed Response from server:', data);
+
+                // Check success and show Swal
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message || 'Return status Update',
+                        text: `Order ID ${data.OrderId} updated to: ${value}`,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed to Update',
+                        text: data.message || 'An error occurred while updating order status.',
+                        showConfirmButton: true
+                    });
+                }
+            })
+
+            .catch(error => {
+
+                console.error('Error: Occured', error);
+
+                // Handle network errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: 'Could not connect to the server. Please try again later.',
+                    showConfirmButton: true
+                });
+            });
+    }
+
+
+</script>

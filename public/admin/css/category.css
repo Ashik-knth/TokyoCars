@@ -1,0 +1,165 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+
+.category-container {
+    width: 70%;
+    margin: 40px auto;
+}
+
+.category-card {
+    background: mistyrose;
+    border-radius: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.category-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.category-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.category-btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.category-btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.category-form-container {
+    background-color: #f9fafb;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    display: none;
+}
+
+.category-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.category-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.category-form-label {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.category-form-input {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.category-form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.category-table-container {
+    overflow-x: auto;
+}
+
+.category-table-container table {
+
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+
+}
+
+.category-table-container th {
+
+    background-color: #f9fafb;
+    padding: 12px 24px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 600;
+
+}
+
+.category-table-container td {
+    padding: 16px 24px;
+    font-size: 14px;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.category-table-container tr:hover {
+    background-color: #f9fafb;
+}
+
+
+.category-action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.category-btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.category-btn-edit {
+    color: #3b82f6;
+}
+
+.category-btn-edit:hover {
+    color: #2563eb;
+}
+
+.category-btn-delete {
+    color: #ef4444;
+}
+
+.category-btn-delete:hover {
+    color: #dc2626;
+}
+
+.category-btn-restore {
+    color: #10b981;
+}
+
+.category-btn-restore:hover {
+    color: #059669;
+}
+
+
+
+

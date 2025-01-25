@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/user/login/logins.css">
+</head>
+
+<body>
+  <div class="container-fluid">
+
+    <div class="row">
+
+
+      <div class="col-md-12">
+        <div class="main">
+
+          <div class="image-section">
+            <img src="https://wallpapercave.com/wp/wp7669194.jpg" alt="">
+          </div>
+          <div class="login-section">
+            <div class="login-header">
+              <h1>LOG IN</h1>
+            </div>
+            <form id="login-form" action="/login" method="post">
+              <div class="form-group">
+                <label class="color" for="username">Email</label>
+                <input type="email" id="username" name="email" placeholder="Enter your email">
+
+                <% if (errors && errors.email_error) { %>
+                  <p class="color-danger">
+                    <%= errors.email_error %>
+                  </p>
+                  <% } %>
+
+
+                    <% if (errors && errors.blocked) { %>
+                      <p class="color-danger">
+                        <%= errors.blocked %>
+                      </p>
+                      <% } %>
+
+
+              </div>
+
+              <div class="form-group">
+                <label class="colors" for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password">
+
+                <% if (errors && errors.password_error) { %>
+                  <p class="color-danger">
+                    <%= errors.password_error %>
+                  </p>
+                  <% } %>
+
+
+              </div>
+              <div class="forgot-password">
+                <a class="color" href="/reset-password">Forgot your password?</a>
+              </div>
+              <button type="submit" class="submit-btn">SUBMIT</button>
+            </form>
+            <div class="create-account">
+              <a class="color" href="/signup">Create an Account</a>
+            </div>
+            <div class="alternative-login">
+              <p>Or</p>
+              <div class="social-login">
+                <a href="/google" id="googleLogin">
+                  <img draggable="false" src="https://cdn-icons-png.flaticon.com/128/300/300221.png" alt="Google"
+                    width="14">
+                  Sign up with Google</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/user/signup/signup.css">
+</head>
+<body>
+    <div class="container">
+        <div class="image-section">
+          <img src="https://i.pinimg.com/736x/9a/5a/47/9a5a4765ba5e2ff8966db7c863b33fbf.jpg" alt="African woman in headwrap">
+        </div>
+        <div class="login-section">
+          <div class="login-header">
+            <h1>SIGN UP</h1>
+            
+            <% if (errors && errors.users_error) { %>
+              <p class="color-danger"><%= errors.users_error %></p>
+            <% } %>
+          </div>
+          <form id="login-form" action="/signup" method="post">
+
+            <!-- USername -->
+
+            <div class="form-group">
+              <label for="username">User name</label>
+              <input type="text" id="username" name="username" placeholder="Enter your username" >
+              
+              <% if (errors && errors.username_error) { %>
+                <p class="color-danger"><%= errors.username_error %></p>
+              <% } %>
+
+            </div>
+
+            
+            <!-- Email -->
+
+            <div class="form-group">
+              <label for="username">Email</label>
+              <input type="email" id="Email" name="email" placeholder="Enter your email" >
+
+              <% if (errors && errors.email_error) { %>
+                <p class="color-danger"><%= errors.email_error %></p>
+              <% } %>
+
+            </div>
+
+           
+            
+            <!-- Password -->
+
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" placeholder="Enter your password" >
+              
+              <% if (errors && errors.password_error) { %>
+                <p class="color-danger"><%= errors.password_error %></p>
+              <% } %>
+              
+            </div>
+
+           
+            
+            <!-- Confirm_Password -->
+
+            <div class="form-group">
+              <label for="password">Confirm Password</label>
+              <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" >
+
+              <% if (errors && errors.confirm_password_error) { %>
+                <p class="color-danger"><%= errors.confirm_password_error %></p>
+              <% } %>
+
+            </div>
+
+
+            <button type="submit" class="submit-btn">SUBMIT</button>
+          </form>
+          <div class="create-account">
+            <a href="/login">Already have an account</a>
+          </div>
+        </div>
+      </div>
+
+      <script src="/user/signup/signup.js"></script>
+</body>
+</html>

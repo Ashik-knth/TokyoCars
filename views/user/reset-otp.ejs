@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Reset OTP Verification</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/user/otp/reset-otp.css">
+
+</head>
+
+<body id="reset-otp-body" >
+    <div class="reset-otp-container">
+        <h2>Verify OTP</h2>
+        <p>Enter the 6-digit code sent to your email or phone</p>
+
+        <form id="reset-otp-form" onsubmit="return submitOTP()">
+            <div class="reset-otp-inputs">
+                <input type="text" maxlength="1" class="otp-field">
+                <input type="text" maxlength="1" class="otp-field">
+                <input type="text" maxlength="1" class="otp-field">
+                <input type="text" maxlength="1" class="otp-field">
+                <input type="text" maxlength="1" class="otp-field">
+                <input type="text" maxlength="1" class="otp-field">
+            </div>
+            <div id="error-message" class="error-message"></div>
+
+            <div id="reset-otpTimer" class="reset-otp-timer">
+                Resend OTP in <span id="reset-timerValue"></span> seconds
+            </div>
+
+            <div class="reset-resend-otp">
+                <a href="#" id="reset-resendLink" onclick="return resendOTP()">Resend OTP</a>
+            </div>
+
+            <button type="submit" class="reset-submit-btn">Submit</button>
+        </form>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const timerElement = document.getElementById("reset-timerValue");
+        const resendLink = document.getElementById("reset-resendLink");
+        const otpFields = document.querySelectorAll('.otp-field');
+        let timerInterval; // Declare timerInterval globally
+
+        // Function to enable or disable OTP input fields
+        function toggleInputFields(disable) {
+            otpFields.forEach(field => {
+                if (disable) {
+                    field.style.pointerEvents = "none"; // Disable field
+                } else {
+                    field.style.pointerEvents = "auto"; // Enable field
+                }
+            });
+        }
+
+        function startTimer() {
+            let timer = 60; 
+            resendLink.classList.remove("active");
+            resendLink.style.pointerEvents = "none"; 
+            toggleInputFields(false); 
+            timerElement.classList.remove("expired");
+            timerElement.textContent = timer;
+
+            clearInterval(timerInterval);
+
+            
+            timerInterval = setInterval(() => {
+                timer--;
+                timerElement.textContent = timer;
+
+                console.log("Timer:", timer);
+                
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.classList.add("expired");
+                    timerElement.textContent = "Expired";
+                   
+                    toggleInputFields(true); 
+                   
+                    resendLink.style.pointerEvents = "auto"; 
+                    resendLink.classList.add("active");
+                }
+            }, 1000);
+        }
+
+        
+        resendLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            startTimer(); 
+        });
+
+       
+        startTimer();
+
+
+        const errorMessage = document.getElementById('error-message');
+        const otpForm = document.getElementById('reset-otp-form');
+
+        otpFields.forEach((field, index) => {
+            field.addEventListener('input', (e) => {
+                if (e.target.value.length === 1) {
+                    // Move to the next field
+                    if (index < otpFields.length - 1) {
+                        otpFields[index + 1].focus();
+                    }
+                }
+            });
+
+            field.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value.length === 0) {
+                    // Move to the previous field on backspace
+                    if (index > 0) {
+                        otpFields[index - 1].focus();
+                    }
+                }
+            });
+        });
+
+
+        function submitOTP() {
+        
+
+            console.log("Submitting OTP");
+
+            const otpFields = document.querySelectorAll('.otp-field');
+
+            const otp = Array.from(otpFields).map(field => field.value).join('');
+
+            console.log("Your validate OTP is", otp);
+        
+            $.ajax({
+                url: '/reset-otp',
+                method: 'POST',
+                data: {
+                    otp: otp
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OTP Verified Successfully',
+                            showconfirmButton: false,
+                            timer: 1500
+
+                        }).then(() => {
+
+                            window.location.href = response.redirectUrl;
+
+                        });
+
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: response.message || 'OTP Verification Failed',
+                            showconfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: response.message ?? 'Invalid OTP',
+                        text:  'Please enter a valid OTP',
+                        showconfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            });
+
+            return false;
+
+        }
+
+        function resendOTP() {
+            console.log("Resending OTP");
+
+            const otpFields = document.querySelectorAll('.otp-field');
+            
+            clearInterval(timerInterval);
+
+            otpFields.forEach(field => {
+                field.value = '';
+            });
+
+
+            timer = 60;
+           
+            
+            document.getElementById("reset-timerValue").textContent = timer;
+            document.getElementById("reset-timerValue").classList.remove("expired");
+            startTimer();
+
+            $.ajax({
+                url: '/reset-resend-otp',
+                method: 'POST',
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message ?? 'OTP Resent Successfully',
+                            showconfirmButton: false,
+                            timer: 1500
+
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'OTP Resent Failed',
+                            text: 'Please try again',
+                            showconfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'OTP Resent Failed',
+                        showconfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+
+            return false;
+
+        }
+
+
+    </script>
+
+
+
+</body>
+
+</html>

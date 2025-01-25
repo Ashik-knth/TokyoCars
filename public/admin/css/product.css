@@ -1,0 +1,147 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f3f4f6;
+}
+
+.product-container {
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    margin: 40px auto;
+}
+
+.product-card {
+    background: mistyrose;
+    border-radius: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 60px;
+    width: 100%;
+}
+
+.product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.product-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #111827;
+}
+
+.product-btn-add {
+    background-color: #3b82f6;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.product-btn-add:hover {
+    background-color: #2563eb;
+}
+
+.product-table-container {
+    overflow-x: auto;
+}
+
+.product-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}   
+
+.product-table-container th {
+    background-color: #f9fafb;
+    padding: 12px 16px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.product-table-container td {
+    padding: 16px;
+    font-size: 14px;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.product-table-container tr:hover {
+    background-color: #f9fafb;
+}
+
+.product-product-cell {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.product-product-image {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.product-status-badge {
+    background-color: #def7ec;
+    color: #03543f;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.product-action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.product-btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+}
+
+.product-btn-edit {
+    color: #3b82f6;
+}
+
+.product-btn-edit:hover {
+    color: #2563eb;
+}
+
+.product-btn-delete {
+    color: #ef4444;
+}
+
+.product-btn-delete:hover {
+    color: #dc2626;
+}
+
+.product-btn-archive {
+    color: #6b7280;
+}
+
+.product-btn-archive:hover {
+    color: #374151;
+}

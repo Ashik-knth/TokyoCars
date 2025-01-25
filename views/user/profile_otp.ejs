@@ -1,0 +1,205 @@
+<div class="profile-reset-container">
+    <h1>Enter Verification Code</h1>
+    <p>We've sent a verification code to your email address</p>
+    <form action="/profile-reset-otp" method="post"  onsubmit="return submitOTP()" >
+        <div class="profile-reset-otp-container">
+            <input type="text" class="profile-otp-input" maxlength="1" onkeyup="moveToNext(this, 0)" pattern="\d*">
+            <input type="text" class="profile-otp-input" maxlength="1" onkeyup="moveToNext(this, 1)" pattern="\d*">
+            <input type="text" class="profile-otp-input" maxlength="1" onkeyup="moveToNext(this, 2)" pattern="\d*">
+            <input type="text" class="profile-otp-input" maxlength="1" onkeyup="moveToNext(this, 3)" pattern="\d*">
+            <input type="text" class="profile-otp-input" maxlength="1" onkeyup="moveToNext(this, 4)" pattern="\d*">
+            <input type="text" class="profile-otp-input" maxlength="1" onkeyup="moveToNext(this, 5)" pattern="\d*">
+        </div>
+
+        <div id="reset-otpTimer" class="reset-otp-timer" style="margin-bottom: 20px;" >
+            Resend OTP in <span id="reset-timerValue"></span> seconds
+        </div>
+
+        <button type="submit" class="profile-verify-btn">Verify Code</button>
+        <a href="#" id="profile-resend" onclick="return resendOTP()" >Resend Code</a>
+    </form>
+</div>
+
+<script>
+    function moveToNext(field, index) {
+        if (field.value.length >= field.maxLength) {
+            if (index < 5) {
+                document.getElementsByClassName('profile-otp-input')[index + 1].focus();
+            }
+        } else if (field.value.length === 0 && index > 0) {
+            document.getElementsByClassName('profile-otp-input')[index - 1].focus();
+        }
+    }
+
+    const timerElement = document.getElementById("reset-timerValue");
+    const resendLink =   document.getElementById("profile-resend");
+    const otpFields = document.querySelectorAll('.profile-otp-input');
+    let timerInterval; // Declare timerInterval globally
+
+    function toggleInputFields(disable) {
+            otpFields.forEach(field => {
+                if (disable) {
+                    field.style.pointerEvents = "none"; // Disable field
+                } else {
+                    field.style.pointerEvents = "auto"; // Enable field
+                }
+            });
+        }
+
+        function startTimer() {
+            let timer = 60; 
+            resendLink.classList.remove("active");
+            resendLink.style.pointerEvents = "none"; 
+            toggleInputFields(false); 
+            timerElement.classList.remove("expired");
+            timerElement.textContent = timer;
+
+            clearInterval(timerInterval);
+
+            
+            timerInterval = setInterval(() => {
+                timer--;
+                timerElement.textContent = timer;
+
+                console.log("Timer:", timer);
+                
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.classList.add("expired");
+                    timerElement.textContent = "Expired";
+                    timerElement.style.color = "red";
+                    timerElement.style.fontFamily = "Arial";
+                   
+                    toggleInputFields(true); 
+                   
+                    resendLink.style.pointerEvents = "auto"; 
+                    resendLink.classList.add("active");
+                }
+            }, 1000);
+        }
+
+        
+        resendLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            startTimer(); 
+        });
+
+       
+        startTimer();
+
+
+        function submitOTP() {
+            const otpFields = document.querySelectorAll('.profile-otp-input');
+            console.log("otp", otpFields);
+            
+            let otp = '';
+            otpFields.forEach(field => {
+                otp += field.value;
+            });
+
+            console.log("OTP:", otp);
+            
+            $.ajax({
+                url: '/profile-reset-otp',
+                method: 'POST',
+                data: {
+                    otp: otp
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OTP Verified Successfully',
+                            showconfirmButton: false,
+                            timer: 1500
+
+                        }).then(() => {
+
+                            window.location.href = response.redirectUrl;
+
+                        });
+
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: response.message || 'OTP Verification Failed',
+                            showconfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: response.message ?? 'Invalid OTP',
+                        text:  'Please enter a valid OTP',
+                        showconfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            });
+
+            return false;
+        }
+
+
+        function resendOTP() {
+            console.log("Resending OTP");
+
+            const otpFields = document.querySelectorAll('.profile-otp-input');
+            
+            clearInterval(timerInterval);
+
+            otpFields.forEach(field => {
+                field.value = '';
+            });
+
+
+            timer = 60;
+           
+            
+            document.getElementById("reset-timerValue").textContent = timer;
+            document.getElementById("reset-timerValue").classList.remove("expired");
+            startTimer();
+
+            $.ajax({
+                url: '/profile-reset-resend-otp',
+                method: 'POST',
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message ?? 'OTP Resent Successfully',
+                            showconfirmButton: false,
+                            timer: 1500
+
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'OTP Resent Failed',
+                            text: 'Please try again',
+                            showconfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'OTP Resent Failed',
+                        showconfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+
+            return false;
+
+        }
+
+
+
+</script>

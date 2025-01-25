@@ -1,0 +1,131 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f3f4f6;
+}
+
+.users-container {
+    width: 70%;
+    margin: 40px auto ;
+    
+}
+
+.users-card {
+    background: mistyrose;
+    border-radius: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+
+
+.users-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 24px;
+}
+
+.users-search-container {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.users-search-input {
+    width: 100%;
+    padding: 8px 16px;
+    padding-right: 100px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.users-search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.users-search-button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 4px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.users-search-button:hover {
+    background: #2563eb;
+}
+
+.users-table-container {
+    overflow-x: auto;
+}
+
+.users-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table-container th{
+    background: #f9fafb;
+    padding: 12px 24px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.users-table-container td {
+    padding: 16px 24px;
+    font-size: 14px;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.users-table-container tr:hover {
+    background: #f9fafb;
+}
+
+
+
+.users-status-badge {
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.users-status-active {
+    background: #def7ec;
+    color: #03543f;
+}
+
+.users-status-inactive {
+    background: #fde8e8;
+    color: #9b1c1c;
+}
+
+.users-action-button {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.ausers-action-button:hover {
+    color: #dc2626;
+}

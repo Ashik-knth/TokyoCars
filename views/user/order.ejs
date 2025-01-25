@@ -1,0 +1,56 @@
+
+
+
+<div class="order-container">
+    <h1 class="order-page-title">My Orders</h1>
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Payment Method</th>
+                <th>Total Amount</th>
+                <th>No of Items</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+    
+            <% orders.forEach((element,index)=> { %>
+
+
+                <tr>
+                    <td># <%= element.OrderId %>
+                    </td>
+                    <td>
+                        <%= element.orderDate.toDateString()%>
+                    </td>
+                    <td>
+                        <%= element.paymentMethod %>
+                    </td>
+                    <td>
+                        <%= element.totalAmount %>
+                    </td>
+                   
+                    <td><span class="payment-paid">
+                            <%= element.items.length%>
+                        </span>
+                    
+                    </td>
+                    <td>
+                        <div class="order-action-buttons">
+                            <a href="/orderdetails/<%= element._id %>"><button
+                                    class="order-btn order-btn-details">Details</button></a>
+                        </div>
+                    </td>
+                </tr>
+
+                <% }) %>
+                    
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+</script>

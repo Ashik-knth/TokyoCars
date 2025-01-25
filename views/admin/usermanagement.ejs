@@ -1,0 +1,54 @@
+
+
+
+<div class="users-container">
+    <div class="users-card">
+        <h2 class="users-title">User Management</h2>
+
+        <div class="users-search-container">
+            <input type="text" placeholder="Search users..." class="users-search-input">
+            <button class="users-search-button">Search</button>
+        </div>
+
+        <div class="users-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach((element, index) => { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= element.username %></td>
+                        <td><%= element.email %></td>
+                        <td>
+                            <span class="users-status-badge <%= element.isBlocked ? 'users-status-inactive' : 'users-status-active' %>">
+                                <%= element.isBlocked ? 'Inactive' : 'Active' %>
+                            </span>
+                        </td>
+                        <td>
+                            <% if (element.isBlocked === false) { %>
+                                <button onclick='blockUser("<%= element._id %>")' class="users-action-button">
+                                    <i class="fas fa-ban"></i> Block
+                                </button>
+                            <% } else { %>
+                                <button onclick='unblockUser("<%= element._id %>")' class="users-action-button">
+                                    <i class="fas fa-unlock"></i> Unblock
+                                </button>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="/admin/js/userblock.js"></script>

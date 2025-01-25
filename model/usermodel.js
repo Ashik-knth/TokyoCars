@@ -4,20 +4,33 @@ const userSchema = new mongoose.Schema({
     username:{
         type: String,
         required: true,
-        trim : true,
 
     },
     password: {
         type: String,
-        required: true
+        required: false,
     },
     email: {
         type: String,
         required: true,
-        unique: true,
-        trim: true,
-        lowercase: true,  
+        unique: true, 
     },
+
+    phone: {
+        type: String,
+        required: false,
+        default: null
+    },
+
+    googleId: {
+        type: String,
+
+    },
+
+    image: {
+        type: String,
+    },
+
     isAdmin: {
         type: Boolean,
         default: false
@@ -25,13 +38,9 @@ const userSchema = new mongoose.Schema({
     isBlocked: {
         type: Boolean,
         default: false
-    },
-   
-    image: {
-        type: String,
-        required: true
-    }
+    }, 
 },
+
 
 {timestamps: true}
 

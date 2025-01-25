@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/user/home/profile.css">
+    <link rel="stylesheet" href="/user/home/home.css">
+    <link rel="stylesheet" href="/user/home/profile-sidebar.css">
+</head>
+
+<body>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+
+                <header>
+
+                    <section id="header">
+
+                        <!-- Website Logo  -->
+
+                        <a href="#"><img src="user/home/logo.webp" class="Logo" alt=""></a>
+
+                        <!-- Navbar Pages -->
+
+                        <div>
+                            <ul id="navbar">
+                                <% if (user) { %>
+
+                                    <li><a class="active" href="/">Home</a></li>
+                                    <li><a href="/shop">Shop</a></li>
+                                    <li><a href="/blog">Blog</a></li>
+                                    <li><a href="/about">About</a></li>
+                                    <li><a href="/contact">Contact</a></li>
+
+                                    <% } else { %>
+
+                                        <li><a class="active" href="/">Home</a></li>
+
+                                        <li><a href="/blog">Blog</a></li>
+                                        <li><a href="/about">About</a></li>
+                                        <li><a href="/contact">Contact</a></li>
+
+                                        <% } %>
+
+                            </ul>
+                        </div>
+
+                        <!-- Nav bar Icons -->
+
+                        <div id="icons">
+                            <% if (user) { %>
+                                <a href="/profile"><i class="fa-solid fa-user"></i></a>
+                                <a href="/cart"><i class="fa-solid fa-bag-shopping"></i></a>
+                                <a href="/wishlist"><i class="fa-solid fa-heart"></i></a>
+                                <% } else { %>
+                                    <a href="/login">Login</a>
+                                    <% } %>
+                        </div>
+
+
+
+                    </section>
+
+                </header>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-md-2">
+
+                <div class="profile-sidebar">
+                    <div class="profile-section">
+                        <img src="https://via.placeholder.com/100" alt="Profile Picture" class="profile-image">
+                        <h2 class="profile-name">John Doe</h2>
+                        <p class="profile-email">john.doe@example.com</p>
+                    </div>
+
+                    <ul class="menu-items">
+                        <li class="menu-item">
+                            <a href="#" class="menu-link active">
+                                <i class="fas fa-user"></i>
+                                My Profile
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Address
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="fas fa-shopping-bag"></i>
+                                Orders
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="fas fa-ticket-alt"></i>
+                                Coupons
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="fas fa-heart"></i>
+                                Wishlist
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="fas fa-wallet"></i>
+                                Wallet
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="fas fa-key"></i>
+                                Reset Password
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="logout-section">
+                        <button class="logout-button">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+
+
+
+            </div>
+            
+          
+            <div class="col-md-10">
+
+                <main>
+                    <%- body %>
+                </main>
+            </div>
+
+
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <section id="newsletter" class="section-p1 section-m1">
+                    <div class="newstext">
+                        <h4>Sign Up For Newsletters</h4>
+                        <p>Get E-mail updates about our latest shop and <span>special offers.</span></p>
+                    </div>
+                    <div class="form">
+                        <input type="text" placeholder="Your email address">
+                        <button class="normal">Sign Up</button>
+                    </div>
+                </section>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+</body>
+
+</html>

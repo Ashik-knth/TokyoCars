@@ -1,0 +1,316 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Checkout Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f7f7f7;
+            padding: 20px;
+        }
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+        }
+
+        .checkout-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .checkout-section-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        /* Address Styles */
+        .checkout-address-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .checkout-address-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-address-card:hover {
+            border-color: #007bff;
+            background: #f8f9ff;
+        }
+
+        .checkout-address-card.selected {
+            border-color: #007bff;
+            background: #f8f9ff;
+        }
+
+        .checkout-add-address-btn {
+            background: #f8f9ff;
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            color: #007bff;
+            margin-top: 15px;
+        }
+
+        /* Product Summary Styles */
+        .checkout-product-card {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 20px;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .checkout-product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .checkout-product-details h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .checkout-product-category {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .checkout-quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkout-quantity-btn {
+            background: #f0f0f0;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Coupon Styles */
+        .checkout-coupon-section {
+            position: relative;
+        }
+
+        .checkout-coupon-dropdown {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .checkout-save-coupon-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* Payment Options */
+        .checkout-payment-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .checkout-payment-option:hover {
+            background: #f8f9ff;
+        }
+
+        .checkout-payment-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Order Summary */
+        .checkout-order-summary {
+            margin-top: 20px;
+        }
+
+        .checkout-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .checkout-total-row {
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-top: 2px solid #f0f0f0;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .checkout-place-order-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .checkout-place-order-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-left-column">
+            <!-- Address Section -->
+            <div class="checkout-section">
+                <h2 class="checkout-section-title">Delivery Address</h2>
+                <div class="checkout-address-list">
+                    <div class="checkout-address-card selected">
+                        <h3>Home</h3>
+                        <p>John Doe</p>
+                        <p>123 Main Street, Apt 4B</p>
+                        <p>New York, NY 10001</p>
+                        <p>Phone: (555) 123-4567</p>
+                    </div>
+                    <div class="checkout-address-card">
+                        <h3>Office</h3>
+                        <p>John Doe</p>
+                        <p>456 Business Ave, Suite 200</p>
+                        <p>New York, NY 10002</p>
+                        <p>Phone: (555) 987-6543</p>
+                    </div>
+                    <div class="checkout-add-address-btn">
+                        + Add New Address
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Section -->
+            <div class="checkout-section">
+                <h2 class="checkout-section-title">Order Summary</h2>
+                <div class="checkout-product-card">
+                    <img src="/api/placeholder/100/100" alt="Product" class="checkout-product-image">
+                    <div class="checkout-product-details">
+                        <h3>Premium T-Shirt</h3>
+                        <p class="checkout-product-category">Clothing - Casual Wear</p>
+                        <div class="checkout-quantity-selector">
+                            <button class="checkout-quantity-btn">-</button>
+                            <span>1</span>
+                            <button class="checkout-quantity-btn">+</button>
+                        </div>
+                    </div>
+                    <div class="checkout-product-price">$250.00</div>
+                </div>
+                <div class="checkout-product-card">
+                    <img src="/api/placeholder/100/100" alt="Product" class="checkout-product-image">
+                    <div class="checkout-product-details">
+                        <h3>Classic Polo</h3>
+                        <p class="checkout-product-category">Clothing - Formal Wear</p>
+                        <div class="checkout-quantity-selector">
+                            <button class="checkout-quantity-btn">-</button>
+                            <span>1</span>
+                            <button class="checkout-quantity-btn">+</button>
+                        </div>
+                    </div>
+                    <div class="checkout-product-price">$100.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout-right-column">
+            <!-- Coupon Section -->
+            <div class="checkout-section coupon-section">
+                <h2 class="checkout-section-title">Apply Coupon</h2>
+                <select class="checkout-coupon-dropdown">
+                    <option value="">Select a coupon</option>
+                    <option value="NEW20">NEW20 - 20% off for new users</option>
+                    <option value="SUMMER10">SUMMER10 - $10 off on summer collection</option>
+                    <option value="FREESHIP">FREESHIP - Free shipping on orders above $200</option>
+                </select>
+                <button class="checkout-save-coupon-btn">Apply Coupon</button>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="checkout-section">
+                <h2 class="checkout-section-title">Payment Method</h2>
+                <div class="checkout-payment-option">
+                    <input type="radio" name="payment" id="checkout-cod">
+                    <label for="cod">Cash on Delivery</label>
+                </div>
+                <div class="checkout-payment-option">
+                    <input type="radio" name="payment" id="checkout-online">
+                    <label for="online">Online Payment (Credit/Debit Card)</label>
+                </div>
+                <div class="checkout-payment-option">
+                    <input type="radio" name="payment" id="checkout-wallet">
+                    <label for="wallet">Wallet</label>
+                </div>
+            </div>
+
+            <!-- Order Total Section -->
+            <div class="checkout-section">
+                <h2 class="checkout-section-title">Order Total</h2>
+                <div class="checkout-order-summary">
+                    <div class="checkout-summary-row">
+                        <span>Subtotal</span>
+                        <span>$350.00</span>
+                    </div>
+                    <div class="checkout-summary-row">
+                        <span>Shipping</span>
+                        <span>$10.00</span>
+                    </div>
+                    <div class="checkout-summary-row">
+                        <span>Tax</span>
+                        <span>$35.00</span>
+                    </div>
+                    <div class="checkout-summary-row total-row">
+                        <span>Total</span>
+                        <span>$395.00</span>
+                    </div>
+                </div>
+                <button class="checkout-place-order-btn">Place Order</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

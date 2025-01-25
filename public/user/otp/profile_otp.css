@@ -1,0 +1,83 @@
+.profile-reset-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.profile-reset-container h1 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.profile-reset-container  p {
+    color: #718096;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+}
+
+.profile-reset-otp-container {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.profile-otp-input {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.profile-otp-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+}
+
+.profile-verify-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+}
+
+.profile-verify-btn:hover {
+    background: #5a67d8;
+}
+
+#profile-resend {
+    margin-top: 1rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.875rem;
+    display: inline-block;
+}
+
+.profile-resend:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .profile-reset-container {
+        padding: 1.5rem;
+    }
+
+    .profile-otp-input {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}

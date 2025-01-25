@@ -1,0 +1,314 @@
+<!-- <div class="order-detail-container">
+    <h1 class="order-heading">Order Status</h1>
+    
+    <div class="order-delivery-address">
+        <h2 class="order-address-title">Delivery Address</h2>
+        <p class="order-address-details">
+            Ashik<br>
+            Kozhikkode<br>
+            Apt 4B<br>
+            Kerala,Kakkanchery<br>
+            Phone: (91+) 7658976543
+        </p>
+    </div>
+
+    <div class="status-slider">
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <div class="status-points">
+            <div class="point active">
+                <span class="point-label">Ordered</span>
+            </div>
+            <div class="point active">
+                <span class="point-label">Processed</span>
+            </div>
+            <div class="point active">
+                <span class="point-label">Shipped</span>
+            </div>
+            <div class="point">
+                <span class="point-label">Delivered</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-product-container">
+        <img src="/api/placeholder/100/100" alt="Product" class="order-product-image">
+        <div class="order-product-details">
+            <h3 class="order-product-name">Buggati Chirron</h3>
+            <div class="order-product-price">$199.99</div>
+            <div class="order-product-quantity">Quantity: 1</div>
+        </div>
+    </div>
+
+    <div class="order-info">
+        <h3>Order Information</h3>
+        <div class="info-row">
+            <span>Order Number:</span>
+            <span>#ORD123456</span>
+        </div>
+        <div class="info-row">
+            <span>Order Date:</span>
+            <span>Dec 28, 2024</span>
+        </div>
+        <div class="info-row">
+            <span>Expected Delivery:</span>
+            <span>Dec 31, 2024</span>
+        </div>
+        <div class="info-row">
+            <span>Payment Method:</span>
+            <span>Credit Card (**** 1234)</span>
+        </div>
+    </div>
+
+    <button class="order-cancel-button">Cancel Order</button>
+</div> -->
+
+
+<div class="order-detail-container">
+
+    <div class="order-detail-header">
+        <h1 class="order-detail-number">Order # <%= order.OrderId %>
+        </h1>
+
+    </div>
+
+    <div class="order-detail-info">
+        <div class="order-detail-info-group">
+            <h3>Order Date</h3>
+            <p>
+                <%= order.orderDate.toDateString() %>
+            </p>
+        </div>
+        <div class="order-detail-info-group">
+            <h3>Shipping Address</h3>
+            <p>
+                <%= order.address.addressName%><br>
+                    <%= order.address.streetAddress %>
+            </p>
+            <p>
+                <%= order.address.city %>,<%= order.address.state %>
+            </p>
+        </div>
+        <div class="order-detail-info-group">
+            <h3>
+                <%= order.paymentMethod %>
+            </h3>
+            <!-- <p>VISA ending in 4242</p> -->
+        </div>
+    </div>
+
+    <div class="order-detail-items">
+
+        <% order.items.forEach((element, index)=> { %>
+
+
+
+            <div class="order-detail-item">
+
+                <img src="/uploads/<%= element.product.productImage[0] %>" alt="Product"
+                    class="order-detail-item-image">
+                <div class="order-detail-item-details">
+
+                    <h3 class="order-detail-item-name">
+                        <%= element.product.productName %>
+                    </h3>
+                    <p class="order-detail-item-price">₹<%= element.product.regularPrice %>
+                    </p>
+                    <p>
+                        <%= element.discount>0 ? "Discount: ₹" + (element.product.regularPrice - element.discount) : ""
+                            %>
+                    </p>
+                    <p>Quantity: <%= element.quantity %>
+                    </p>
+                    <p>
+                        <%= element.orderStatus==="Cancelled" ? "" : "Payment Status: " + element.PaymentStatus %>
+                    </p>
+                    <% if (element.orderStatus==="Cancelled" || element.orderStatus==="Delivered" ) { %>
+                        <button disabled style="display: none;" type="button"
+                            onclick="cancelOrder('<%= order._id %>', '<%= element.product._id %>')"
+                            class="order-detail-cancel-button">Cancel Order</button>
+
+                        <% }else { %>
+                            <button type="button"
+                                onclick="cancelOrder('<%= order._id %>', '<%= element.product._id %>')"
+                                class="order-detail-cancel-button">Cancel Order</button> &nbsp;
+
+
+                            <% } %>
+
+
+                                <% if (element.orderStatus==="Delivered" ) { %>
+                                    <button class="order-detail-cancel-button" <%=element.isReturnRequested ? 'disabled'
+                                        : '' %>
+                                        onclick="returnOrder('<%= order._id %>', '<%= element.product._id %>')"
+                                                type="button">
+                                                Return
+                                    </button>
+                                    <% } %>
+
+                </div>
+
+                <span class="order-detail-status">
+
+
+                    <%= element.isReturnRequested ? (element.isAdminAcceptedReturn==='Accepted'
+                        ? 'Return Request Accepted' : (element.isAdminAcceptedReturn==='Rejected'
+                        ? 'Return Request Rejected' : 'Return Requested' )) : element.orderStatus %>
+
+                </span>
+
+            </div>
+
+            <% }) %>
+    </div>
+
+    <div class="order-detail-summary">
+        <div class="order-detail-summary-row">
+            <span>Subtotal</span>
+            <span>₹<%= order.totalAmount%></span>
+        </div>
+        <div class="order-detail-summary-row">
+            <span>Shipping</span>
+            <span>₹40</span>
+        </div>
+        <div class="order-detail-summary-row">
+            <span>Coupon</span>
+            <span>₹<%= discountPrice %></span>
+        </div>
+        <div class="order-detail-summary-row">
+            <span>Total</span>
+            <span>₹<%= order.payableAmount %></span>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+<script>
+
+
+    function cancelOrder(OrderId, ProductId) {
+        console.log("hai hello product cancellation", ProductId);
+
+        console.log("hai hello order cancellation", OrderId);
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/cancelOrder', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        const data = JSON.stringify({ orderId: OrderId, productId: ProductId });
+        xhr.send(data);
+
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.success) {
+
+
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Order cancelled successfully',
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+
+                        window.location.reload();
+
+                    })
+                }
+
+            } else {
+                console.log("Something went wrong");
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Something went wrong',
+                    text: 'Please try again',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        }
+
+
+    }
+
+
+    function returnOrder(orderId, productId) {
+
+        console.log("this is my order id ", orderId);
+        console.log("this is my product id ", productId);
+
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to return this product',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, do it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+
+                fetch('/return-order', {
+
+                    method: 'POST',
+
+                    headers: { 'Content-Type': 'application/json' },
+
+                    body: JSON.stringify({
+                        orderId,
+                        productId,
+                    }),
+
+                }).then((response) => {
+
+                    if (response.ok) {
+
+                        console.log("Order returned successfully");
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Returned',
+                            text: response.message || 'Your order has been returned successfully'
+                        }).then(() => {
+                            window.location.reload();
+                        })
+
+                    } else {
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ERROR!',
+                            text: 'Something went wrong while returning the order.',
+
+                        })
+
+                        console.log("something went wrong", response.status);
+
+                    }
+                }).catch((error) => {
+                    console.log(error);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ERROR!',
+                        text: 'Unexpected Error Occured  Please Try Again Later '
+                    })
+                });
+            }
+        })
+
+
+
+
+    }
+
+
+</script>

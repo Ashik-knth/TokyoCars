@@ -1,0 +1,264 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-image: url("https://wallpapercave.com/wp/wp1860107.jpg");
+  padding: 20px;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  max-width: 844px;
+  background: white;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.image-section {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.login-section {
+  flex: 1;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-header {
+  margin-bottom: 40px;
+}
+
+.login-header h1 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #f8f8f8;
+  font-size: 1rem;
+  margin-top: 8px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-bottom: 25px;
+}
+
+.forgot-password a {
+  color: #4444ff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.submit-btn {
+  background: #dd9966;
+  color: white;
+  border: none;
+  padding: 15px;
+  width: 100%;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #cc8855;
+}
+
+.alternative-login {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.alternative-login p {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.social-login {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.social-login button{
+    height: 50px;
+    width: 45%;
+    border-radius: 5px;
+    background: #ebe0e0;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.social-btn:hover {
+  background: #eeeeee;
+}
+
+.social-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.create-account {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.create-account a {
+  color: #4444ff;
+  text-decoration: none;
+}
+
+.color-danger {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+
+.otp-timer {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 14px;
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  line-height: 60px;
+  text-align: center;
+  background: #f2f2f2;
+  border: 2px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+#timerValue {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  line-height: 60px;
+}
+#timerValue.expired {
+  font-size: 14px;
+  color: red;
+}
+
+
+/* Media Queries for Responsiveness */
+
+/* For Tablets (768px and below) */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .image-section {
+    flex: 1;
+    max-height: 300px; /* Limit the height of the image */
+  }
+
+  .image-section img {
+    object-fit: cover;
+  }
+
+  .login-section {
+    padding: 30px;
+  }
+
+  .login-header h1 {
+    font-size: 2rem;
+  }
+
+  .submit-btn {
+    padding: 12px;
+  }
+}
+
+/* For Mobile Devices (480px and below) */
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    box-shadow: none; /* Remove shadow for simpler design on smaller devices */
+    border-radius: 0;
+  }
+
+  .login-section {
+    padding: 20px;
+  }
+
+  .login-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .form-group input {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .submit-btn {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .social-btn {
+    width: 35px;
+    height: 35px;
+  }
+
+  .social-btn img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .create-account a {
+    font-size: 0.9rem;
+  }
+}
+

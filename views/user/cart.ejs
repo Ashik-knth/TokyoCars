@@ -1,0 +1,251 @@
+<section id="page-header" class="about-header">
+    <h2>#let's_talk</h2>
+    <p>LEAVE A MESSAGE, We love to hear from you!</p>
+</section>
+
+<section id="cart" class="section-p1">
+    <table width="100%">
+        <thead>
+            <tr>
+                <td>Remove</td>
+                <td>Image</td>
+                <td>Product</td>
+                <td>Price</td>
+                <td>Quantity</td>
+                <td>Subtotal</td>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (cart && cart.items.length> 0) { %>
+                <% cart.items.forEach((item,index)=> { %>
+                    <tr>
+                        <td>
+
+                            <i class='bx bx-x-circle cart-remove '
+                                onclick="removeFromCart('<%= item.product._id %>')"></i>
+
+                        </td>
+                        <td><img src="/uploads/<%= item.product.productImage[0] %>" alt="Cart Image"></td>
+                        <td>
+                            <%= item.product.productName %>
+                        </td>
+                        <td>₹<%= item.product.regularPrice %>
+                        </td>
+
+                        <td>
+
+                            <!-- Decrement Button -->
+                            <button class="checkout-quantity-btns"
+                                onclick="handleQuantityChange('<%= item.product._id %>', -1, '<%= item.product.stock %>' , '<%= index %>' , '<%= item.product.regularPrice %>')">-</button>
+
+                            <!-- Quantity Input -->
+                            <input id="quantitymax-<%= index %>" type="number" min="1" value="<%= item.quantity %>"
+                                readonly />
+
+                            <!-- Increment Button -->
+                            <button class="checkout-quantity-btns"
+                                onclick="handleQuantityChange('<%= item.product._id %>', 1, '<%= item.product.stock %>', '<%= index %>', '<%= item.product.regularPrice %>')">+</button>
+
+
+                        </td>
+                        <td id="totalAmount-<%= index %>">₹<%= item.quantity * item.product.regularPrice %>
+                        </td>
+                    </tr>
+                    <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6">Your cart is empty</td>
+                            </tr>
+                            <% } %>
+        </tbody>
+    </table>
+</section>
+
+
+<section id="cart-add" class="section-p1">
+  
+
+    <div id="subtotal">
+        <h3>Cart Total</h3>
+        <table>
+            <tr>
+                <td>Cart Subtotal</td>
+                <td id="cartAmount">₹<%= totalAmount %>
+                </td>
+            </tr>
+            <tr>
+                <td>Shipping</td>
+                <td><%= cart.items.length>0 ? 40 : 0 %></td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td id="grandTotal" ><strong>₹<%=  cart.items.length>0 ? totalAmount + 40 : 0 %></strong></td>
+            </tr>
+        </table>
+
+
+
+        <% if (cart && cart.items.length > 0) { %>
+
+            <a href="/checkout"><button class="normal">Proceed to checkout</button></a>
+         
+        <% } %>
+        
+    </div>
+</section>
+
+
+<script>
+
+
+    function handleQuantityChange(productId, change, maxStock, index, regularPrice) {
+
+        console.log("this is productssss id", productId);
+
+        const inputField = document.querySelector(`#quantitymax-${index}`);
+        const totalAmount = document.getElementById(`totalAmount-${index}`);
+        const cartAmount = document.getElementById('cartAmount');
+        const grandTotal = document.getElementById('grandTotal');
+        // Get the current quantity
+        let currentValue = parseInt(inputField.value);
+
+        // Calculate the new quantity
+        let newValue = currentValue + change;
+
+        // Enforce valid quantity limits
+        if (newValue < 1) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Quantity cannot be less than 1',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            newValue = 1; // Minimum quantity
+        } else if (newValue > maxStock) {
+            newValue = maxStock;
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Quantity exceeds stock',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+
+        // Update the input field's value
+        inputField.value = newValue;
+
+        // Update the total amount
+        const newTotalAmount = newValue * regularPrice;
+
+        totalAmount.textContent = `₹${newTotalAmount}`;
+
+        let updatedCartTotal = 0;
+
+        const allTotalAmounts = document.querySelectorAll("td[id^='totalAmount-']");
+
+        allTotalAmounts.forEach((amount, i) => {
+
+            const itemPrice = parseInt(amount.textContent.replace("₹", ""));
+
+            updatedCartTotal += itemPrice;
+        });
+
+        cartAmount.textContent = `₹${updatedCartTotal}`;
+
+        const newGrandTotal = updatedCartTotal+40;
+        grandTotal.textContent = `₹${newGrandTotal}`;
+
+        updateQuantity(productId, newValue);
+    }
+
+    function updateQuantity(productId, quantity) {
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/update-quantity', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        const data = JSON.stringify({
+            productId: productId,
+            quantity: quantity
+        })
+        xhr.send(data);
+
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                if (xhr.status == 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+
+                        const response = JSON.parse(xhr.responseText);
+
+                        console.log("this is quantity", response.quantity);
+
+                    } else {
+                        // Update input field with valid quantity
+                        document.getElementById('quantitymax').value = response.quantity;
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: response.message,
+                            text: `Error`,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                }
+            }
+        }
+
+    };
+
+
+
+
+
+
+
+    function removeFromCart(productId) {
+        $.ajax({
+            url: '/remove-from-cart',
+            type: 'POST',
+            data: {
+                productId: productId
+            },
+
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message,
+                        showConfirmButton: true,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.reload();
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message,
+                        showConfirmButton: true,
+                        timer: 1500
+                    })
+                }
+            },
+
+            error: function (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.responseJSON.message,
+                    showConfirmButton: true,
+                    timer: 1500
+                })
+            }
+        })
+    }
+
+
+</script>

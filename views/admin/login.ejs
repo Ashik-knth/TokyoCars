@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/admin/css/login.css">
+  <link rel="icon" type="image/x-icon" href="https://i.pinimg.com/736x/d6/dc/c4/d6dcc4100382a8523af639b989878242.jpg">
+</head>
+<body>
+
+
+  <% if (!admin) { %>
+     
+ 
+    <div class="login-background">
+        <div class="login-shape"></div>
+        <div class="login-shape"></div>
+    </div>
+    <form action="/admin/login" method="post" class="login-form">
+        <h3> Admin Login Here</h3>
+
+        <% if (errors && errors.admin_error ) { %>
+            <p class="error_message"><%= errors.admin_error %></p>
+          <% } %>
+
+        <% if (errors && errors.fields_error) { %>
+            <p class="error_message"><%= errors.fields_error %></p>
+          <% } %>
+
+        <label for="Email">Email</label>
+        <input type="email" name="email" placeholder="Enter your email" id="username">
+
+        <% if (errors && errors.email_error) { %>
+            <p class="error_message"><%= errors.email_error %></p>
+          <% } %>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" placeholder="Enter your password" id="password">
+
+        <% if (errors && errors.password_error) { %>
+            <p class="error_message"><%= errors.password_error %></p>
+          <% } %>
+
+          <% if (errors && errors.admin_password_match) { %>
+            <p class="error_message"><%= errors.admin_password_match %></p>
+          <% } %>
+
+        <button type="onsubmit">Log In</button>
+
+    </form>
+
+
+    <% } %>  
+  
+</body>
+</html>

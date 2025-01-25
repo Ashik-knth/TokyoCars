@@ -1,0 +1,134 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f3f4f6;
+}
+
+
+.order-container {
+    padding: 2rem;
+    max-width: 91%;
+    margin: 12px -48px;
+    margin-left: 9%;
+}
+
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.order-title {
+    font-size: 1.5rem;
+    color: #1a1a1a;
+}
+
+.order-table-container {
+    background:mistyrose;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.order-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.order-table-container th {
+    background: mistyrose;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid mistyrose;
+}
+
+.order-table-container td {
+    padding: 1rem;
+    border-bottom: 1px solid mistyrose;
+    color: #4b5563;
+}
+
+.order-table-container tr:hover {
+    background: #f9fafb;
+}
+
+.order-status-select, .payment-status-select {
+    padding: 0.5rem;
+    border: 1px solid mistyrose;
+    border-radius: 4px;
+    background: mistyrose;
+    color: #374151;
+    cursor: pointer;
+    min-width: 130px;
+}
+
+.payment-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+}
+
+.status-paid {
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.status-pending {
+    background: #fff7ed;
+    color: #9a3412;
+}
+
+.status-failed {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.status-refunded {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.order-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.order-btn-view {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.order-btn-view:hover {
+    background: #e5e7eb;
+}
+
+.order-payment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.order-payment-icon {
+    width: 16px;
+    height: 16px;
+}

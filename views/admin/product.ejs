@@ -1,0 +1,82 @@
+
+
+<div class="product-container">
+  <div class="product-card">
+      <div class="product-header">
+          <h2 class="product-title">Product Management</h2>
+          <a href="/admin/addproduct" class="product-btn-add">
+              <i class="fas fa-plus"></i>
+              Add New Product
+          </a>
+      </div>
+
+      <div class="product-table-container">
+          <table>
+              <thead>
+                  <tr>
+                      <th>Product</th>
+                      <th>Product Name</th>
+                      <th>Category</th>
+                      <th>Stock</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                  </tr>
+              </thead>
+              <tbody>
+               
+                <% product.forEach(element => { %>
+
+                  <tr>
+                      <td>
+                          <div class="product-product-cell">
+                              <img src="/uploads/<%= element.productImage[0] %>" alt="Product" class="product-product-image"/>
+                          </div>
+                      </td>
+                      <td><%= element.productName %></td>
+                      <td><%= element.category.name%></td>
+                      <td><%= element.stock %></td>
+                      <td><%= element.regularPrice %></td>
+                      <td>
+                          <span class="product-status-badge">Active</span>
+                      </td>
+                      <td>
+                          <div class="product-action-buttons">
+                              <a href="/admin/editproduct?id=<%= element._id %>" >
+                                  <button class="product-btn-icon product-btn-edit">
+                                    
+                                      <i class="fas fa-edit"></i>
+                                  </button>
+                              </a>
+                             
+                              <% if (element.isBlocked==false) { %>
+                               
+                             
+
+                              <button class="product-btn-icon product-btn-delete" onclick="deleteProduct('<%= element._id %>')"  >
+                                  <i class="fas fa-trash"></i>
+                              </button>
+                               
+                              <% }  else { %>
+
+                              <button class="product-btn-icon product-btn-archive" onclick="archiveProduct('<%= element._id %>')" >
+                                  <i class="fas fa-archive"></i>
+                              </button>
+
+                              <% } %>
+                          </div>
+                      </td>
+                  </tr>
+
+                  <% }) %>
+
+                  <!-- Add more product rows as needed -->
+              </tbody>
+          </table>
+      </div>
+  </div>
+</div>
+
+
+<script src="/admin/js/productdelete.js"></script>
+

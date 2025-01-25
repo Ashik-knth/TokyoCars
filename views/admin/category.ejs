@@ -1,0 +1,358 @@
+
+
+
+
+<div class="category-container">
+
+
+  <div class="category-card">
+    <div class=" category-header">
+        <h2 class=" category-title">Category Management</h2>
+        <button class=" category-btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">
+            <i class="fas fa-plus"></i>
+            Add New Category
+        </button>
+    </div>
+
+    <div class=" category-form-container">
+        <div class=" category-form-grid">
+            <div class=" category-form-group">
+                <label class=" category-form-label">Category Name</label>
+                <input type="text" class=" category-form-input">
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+                <button class="btn btn-primary">Save Category</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Category ID</th>
+                    <th>Category Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% category.forEach((element,index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= element.name %></td>
+                    <td>
+                        <div class=" category-action-buttons">
+                            <button class="category-btn-icon category-btn-edit" data-bs-toggle="modal" data-bs-target="#editcategory" 
+                                    data-bs-whatever="@mdo" data-category-name="<%= element.name %>" 
+                                    data-category-id="<%= element._id %>">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            
+                            <% if (element.isDeleted === false) { %>
+                            <button class=" category-btn-icon category-btn-delete" onclick="deleteCategory('<%= element._id %>')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <% } else { %>
+                            <button class="category-btn-icon category-btn-restore" onclick="restoreCategory('<%= element._id %>')">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                            <% } %>
+                        </div>
+                    </td>
+                </tr> 
+                <% }) %> 
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+
+
+ <!-- ADD CATEGORY MODAL -->
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Category</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Add Category</label>
+            <p id="error_message"></p>
+            <input type="text" class="form-control" id="addcategory" name="name" placeholder="Category Name">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" onclick="return handleFormsubmit(event)">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- EDIT CATEGORY MODAL  -->
+
+
+
+<div class="modal fade" id="editcategory" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Category</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <input type="hidden" id="categoryId" name="categoryId">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"> Edit Category</label>
+            
+            <% if (errors && errors.category_error) { %>
+                    <p><%= errors.category_error %></p>
+            <% } %>
+
+            <p id="error_messages"></p>
+            <input type="text" class="form-control" id="editcategorys" name="categoryName">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" onclick="return  SaveCategory(event)">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/admin/js/categorydelete.js"></script>
+
+
+<script>
+
+  function handleFormsubmit(event) {
+    console.log("Handle form submit");
+    event.preventDefault();
+
+
+    const isValid = validateForm();
+    if (!isValid) {
+      return;
+    }
+
+    const categoryName = document.getElementById("addcategory").value.trim();
+    console.log(categoryName);
+
+    $.ajax({
+      url: "/admin/addcategory",
+      type: "POST",
+      data: { name: categoryName },
+      success: function (response) {
+        console.log(response);
+        if (response.success) {
+          Swal.fire({
+            icon: "success",
+            title: response.message,
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            window.location.reload(response.redirectUrl);
+          })
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: response.message || "Category Adding Failed",
+            text: "Please try again",
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      },
+      error: function (error) {
+        Swal.fire({
+          icon: "error",
+          title: error.response.message,
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    });
+  }
+
+  function validateForm() {
+    console.log("Validate form");
+
+    clearErrorMessage();
+    console.log("Validate form submit");
+
+
+    const category = document.getElementById("addcategory").value.trim();
+    const errorMessage = document.getElementById("error_message");
+    const categoryRegex = /^[A-Za-z]+$/;
+
+    console.log(category);
+
+    if (category === "") {
+      showError(errorMessage, "Category is empty");
+      return false;
+    }
+
+    if (!categoryRegex.test(category)) {
+      showError(errorMessage, "Category must contain only letters ");
+      return false;
+    }
+
+    return true;
+  }
+
+  function showError(element, message) {
+
+    console.log("Show error message");
+
+    element.textContent = message;
+    element.style.color = "red";
+    element.style.display = "block";
+    element.style.fontSize = "12px";
+  }
+
+  function clearErrorMessage() {
+    const errorMessage = document.getElementById("error_message");
+    errorMessage.textContent = "";
+    errorMessage.style.display = "none";
+  }
+
+
+
+  // EDIT MODAL FUNCTIONS
+
+
+
+ 
+
+
+  function SaveCategory(event) {
+
+    console.log("Save category");
+
+    event.preventDefault();
+
+    const isValid = EditValidateForm();
+    if (!isValid) {
+      return;
+    }
+
+    console.log("Save category");
+
+    const categoryName = document.getElementById("editcategorys").value;
+    const categoryId = document.getElementById("categoryId").value;
+
+    $.ajax({
+      url: "/admin/editcategory",
+      type: "POST",
+      data: { name: categoryName, _id: categoryId },
+      success: function (response) {
+        console.log(response);
+        if (response.success) {
+          Swal.fire({
+            icon: "success",
+            title: response.message,
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            window.location.replace(response.redirectUrls);
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: response.message || "Category Adding Failed",
+            text: "Please try again",
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      },
+      error: function (error) {
+        Swal.fire({
+          icon: "error",
+          title: error.message || "Error updating category",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    });
+  }
+
+
+
+  function EditValidateForm() {
+    console.log("Validate edit form");
+
+    clearErrorMessage();
+    console.log("Validate form submit");
+
+
+    const categorys = document.getElementById("editcategorys").value.trim();
+    const errorMessages = document.getElementById("error_messages");
+    const categoryRegex = /^[A-Za-z]+$/;
+
+
+
+    if (categorys === "") {
+      showError(errorMessages, "Category is empty");
+      return false;
+    }
+
+    if (!categoryRegex.test(categorys)) {
+      showError(errorMessages, "Category must contain only letters ");
+      return false;
+    }
+
+    return true;
+  }
+
+  function showError(elements, messages) {
+
+    console.log("Show error message");
+
+    elements.textContent = messages;
+    elements.style.color = "red";
+    elements.style.display = "block";
+    elements.style.fontSize = "12px";
+  }
+
+  function clearErrorMessage() {
+    const errorMessages = document.getElementById("error_messages");
+    errorMessages.textContent = "";
+    errorMessages.style.display = "none";
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("Document loaded");
+
+    const editModal = document.getElementById("editcategorys");
+
+    document.querySelectorAll(".category-btn-edit").forEach(button => {
+      button.addEventListener("click", function () {
+        console.log("Edit button clicked");
+
+        const categoryName = this.getAttribute("data-category-name");
+        const categoryId = this.getAttribute("data-category-id");
+
+        console.log(categoryName, categoryId);
+
+        document.getElementById("editcategorys").value = categoryName;
+        document.getElementById("categoryId").value = categoryId;
+      });
+    });
+  });
+
+
+</script>
