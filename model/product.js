@@ -1,9 +1,21 @@
 const mongoose = require("mongoose");
-const { product } = require("../controller/admin/admin_controller");
 const Category = require("./category");
+const { required } = require("joi");
 
 const productSchema = new mongoose.Schema(
   {
+
+    productoffer:{
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "Offer",
+      required : false
+    },
+
+    categoryoffer:{
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "Offer",
+      required : false
+    },
     productName: {
       type: String,
       required: true,
@@ -47,6 +59,16 @@ const productSchema = new mongoose.Schema(
       enum: ["Available", "Out of Stock"],
       default: "Available",
     },
+
+    productofferprice : {
+      type : Number,
+      required : false,
+    },
+
+    categoryofferprice : {
+      type : Number,
+      required : false
+    }
   },
   { timestamps: true }
 );

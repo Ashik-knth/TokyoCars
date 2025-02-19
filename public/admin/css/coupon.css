@@ -167,3 +167,13 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+
+
+#maximmum-amount::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+#minimmum-amount::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}

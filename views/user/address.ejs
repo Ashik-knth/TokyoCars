@@ -1,13 +1,15 @@
+
+<div class="header">
+  <h1>My Addresses</h1>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal" data-bs-whatever="@mdo">Add New Address</button>
+  <br>
+  <br>
+  <% if (success && Object.keys(success).length > 0) { %>
+    <p class="success-message" ><%= success%></p>
+  <% } %>
+</div>
+
 <div class="address-container">
-  <div class="header">
-    <h1>My Addresses</h1>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal" data-bs-whatever="@mdo">Add New Address</button>
-    <br>
-    <br>
-    <% if (success && Object.keys(success).length > 0) { %>
-      <p class="success-message" ><%= success%></p>
-    <% } %>
-  </div>
    <% if (address && address.length > 0) { %>
     <% address.forEach(element => { %>
      

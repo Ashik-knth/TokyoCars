@@ -46,7 +46,9 @@
           <button type="button" class="coupon-action-btn" data-bs-toggle="modal" data-bs-target="#edit-Modal"
             data-bs-whatever="@mdo" data-coupon-code="<%= element.coupon_code %>"
             data-coupon-discount="<%= element.discount %>" data-coupon-Id="<%= element._id %>"
-            data-coupon-expiryDate="<%= element.expiryDate.toDateString() %>">✏️ Edit</button>
+            data-coupon-expiryDate="<%= element.expiryDate.toDateString() %>"
+            data-coupon-minimmum="<%= element.minimum_purchase_amount %>"
+            data-coupon-maximmum="<%= element.maximum_coupon_amount %>">✏️ Edit</button>
           <!-- <button class="coupon-action-btn">✏️ Edit</button> -->
           <button class="coupon-action-btn" onclick="deleteCoupon('<%= element._id %>')">🗑️ Delete</button>
         </div>
@@ -74,6 +76,12 @@
 
             <label for="coupon-name" class="col-form-label">Coupon Code:</label>
             <input type="text" class="form-control" id="coupon-name" placeholder="eg. SUMMER2025" name="name">
+
+            <label for="minimmum-amount" class="col-form-label">Minimum Amount</label>
+            <input type="number" class="form-control" id="minimmum-amount" name="minimmum" min="0" required>
+
+            <label for="maximmum-amount" class="col-form-label">Maximum Amount</label>
+            <input type="number" class="form-control" id="maximmum-amount" name="maximmum" min="0" required>
 
             <label for="discount-name" class="col-form-label">Discount:</label>
             <input type="text" class="form-control" id="discount-name" placeholder="eg. 25% OFF" name="discount">
@@ -110,6 +118,12 @@
             <label for="edit-coupon" class="col-form-labels">Coupon Code:</label>
             <input type="text" class="form-control" id="edit-coupon" name="couponName">
 
+            <label for="edit-minimmum-amount" class="col-form-labels">Minimum Amount</label>
+            <input type="number" class="form-control" id="edit-minimmum-amount" name="minimmum" min="0" required>
+
+            <label for="edit-maximmum-amount" class="col-form-labels">Maximum Amount</label>
+            <input type="number" class="form-control" id="edit-maximmum-amount" name="maximmum" min="0" required>
+
             <label for="edit-discount" class="col-form-labels">Discount</label>
             <input type="text" class="form-control" id="edit-discount" name="discountName">
 
@@ -135,6 +149,9 @@
   const labelinput = document.querySelectorAll('.col-form-label');
   const submitBtn = document.getElementById('submitBtn');
 
+  console.log("This is the label", labelinput);
+
+
 
 
   const removeErrorMessage = (label) => {
@@ -150,12 +167,20 @@
   });
 
   document.getElementById('discount-name').addEventListener('input', () => {
-    removeErrorMessage(labelinput[1]);
+    removeErrorMessage(labelinput[3]);
   });
 
   document.getElementById('valid-until-name').addEventListener('input', () => {
-    removeErrorMessage(labelinput[2]);
+    removeErrorMessage(labelinput[4]);
   });
+
+  document.getElementById('minimmum-amount').addEventListener('input', () => {
+    removeErrorMessage(labelinput[1]);
+  });
+
+  document.getElementById('maximmum-amount').addEventListener('input', () => {
+    removeErrorMessage(labelinput[2]);
+  })
 
 
   // EDIT MODAL VALIDATION
@@ -184,6 +209,8 @@
     const couponName = document.getElementById('coupon-name').value.trim();
     const discountName = document.getElementById('discount-name').value.trim();
     const validUntilName = document.getElementById('valid-until-name').value.trim();
+    const minimmum = document.getElementById('minimmum-amount').value.trim();
+    const maximmum = document.getElementById('maximmum-amount').value.trim();
 
 
 
@@ -195,7 +222,7 @@
 
     let isValid = true;
 
-    // Helper function to add error messages
+
     const addErrorMessage = (label, message) => {
       const errorElement = document.createElement('div');
       errorElement.style.color = 'red';
@@ -205,7 +232,7 @@
       label.appendChild(errorElement);
     };
 
-    // Validate coupon name
+
     if (couponName === '') {
       addErrorMessage(labelinput[0], 'Please enter a valid coupon code');
       isValid = false;
@@ -216,24 +243,44 @@
       addErrorMessage(labelinput[0], 'Coupon code must be less than 20 characters');
     }
 
-    // Validate discount
+
     if (discountName === '') {
-      addErrorMessage(labelinput[1], 'Please enter a valid discount');
+      addErrorMessage(labelinput[3], 'Please enter a valid discount');
       isValid = false;
     } else if (discountName < 4) {
-      addErrorMessage(labelinput[1], 'Please enter above 4% discount')
+      addErrorMessage(labelinput[3], 'Please enter above 4% discount')
     } else if (discountName < 0) {
-      addErrorMessage(labelinput[1], 'Please enter a valid discount')
+      addErrorMessage(labelinput[4], 'Please enter a valid discount')
     }
 
     if (validUntilName === '') {
-      addErrorMessage(labelinput[2], 'Please enter a valid date');
+      addErrorMessage(labelinput[4], 'Please enter a valid date');
       isValid = false;
     } else if (validUntilDate < currentDate) {
-      addErrorMessage(labelinput[2], 'Please enter a future date')
+      addErrorMessage(labelinput[4], 'Please enter a future date')
       isValid = false;
-    } else if (validUntilDate<=currentDate) {
-      addErrorMessage(labelinput[2], 'Please enter a future date')
+    } else if (validUntilDate <= currentDate) {
+      addErrorMessage(labelinput[4], 'Please enter a future date')
+      isValid = false;
+    }
+
+    if (minimmum == '') {
+
+      addErrorMessage(labelinput[1], 'Please enter minimmum amount');
+      isValid = false;
+
+    } else if (minimmum < 0) {
+      addErrorMessage(labelinput[1], 'Amount must be greater than 0');
+      isValid = false;
+    }
+
+    if (maximmum == '') {
+
+      addErrorMessage(labelinput[2], 'Please enter minimmum amount');
+      isValid = false;
+
+    } else if (maximmum < 0) {
+      addErrorMessage(labelinput[2], 'Amount must be greater than 0');
       isValid = false;
     }
 
@@ -260,6 +307,8 @@
     const couponName = document.getElementById('edit-coupon').value.trim();
     const discountName = document.getElementById('edit-discount').value.trim();
     const validUntilName = document.getElementById('edit-date').value.trim();
+    const minimmum = document.getElementById('edit-minimmum-amount').value.trim();
+    const maximmum = document.getElementById('edit-maximmum-amount').value.trim();
 
 
     const validUntilDate = new Date(validUntilName);
@@ -293,23 +342,44 @@
 
     // Validate discount
     if (discountName === '') {
-      addErrorMessage(label[1], 'Please enter a valid discount');
+      addErrorMessage(label[3], 'Please enter a valid discount');
       isValid = false;
     } else if (discountName < 4) {
-      addErrorMessage(label[1], 'Please enter above 4% discount');
+      addErrorMessage(label[3], 'Please enter above 4% discount');
     } else if (discountName < 0) {
-      addErrorMessage(label[1], 'Please enter a valid discount');
+      addErrorMessage(label[3], 'Please enter a valid discount');
     }
 
     // Validate date
     if (validUntilName === '') {
-      addErrorMessage(label[2], 'Please enter a valid date');
+      addErrorMessage(label[4], 'Please enter a valid date');
       isValid = false;
     } else if (validUntilDate < currentDate) {
-      addErrorMessage(label[2], 'Please enter a future date');
+      addErrorMessage(label[4], 'Please enter a future date');
       isValid = false;
     } else if (validUntilDate <= currentDate) {
-      addErrorMessage(label[2], 'Please enter a future date');
+      addErrorMessage(label[4], 'Please enter a future date');
+      isValid = false;
+    }
+
+
+    if (minimmum == '') {
+
+      addErrorMessage(labelinput[1], 'Please enter minimmum amount');
+      isValid = false;
+
+    } else if (minimmum < 0) {
+      addErrorMessage(labelinput[1], 'Amount must be greater than 0');
+      isValid = false;
+    }
+
+    if (maximmum == '') {
+
+      addErrorMessage(labelinput[2], 'Please enter minimmum amount');
+      isValid = false;
+
+    } else if (maximmum < 0) {
+      addErrorMessage(labelinput[2], 'Amount must be greater than 0');
       isValid = false;
     }
 
@@ -331,6 +401,8 @@
         const couponDiscount = this.getAttribute("data-coupon-discount");
         const couponDate = this.getAttribute("data-coupon-expiryDate");
         const couponId = this.getAttribute("data-coupon-Id");
+        const minimmum = this.getAttribute("data-coupon-minimmum");
+        const maximmum =this.getAttribute("data-coupon-maximmum");
 
         console.log("qqqqqqqq", couponId);
 
@@ -345,6 +417,8 @@
         document.getElementById("edit-discount").value = couponDiscount;
         document.getElementById("edit-date").value = formattedDate;
         document.getElementById("edit-id").value = couponId;
+        document.getElementById('edit-minimmum-amount').value = minimmum;
+        document.getElementById('edit-maximmum-amount').value = maximmum ;
 
       });
     });

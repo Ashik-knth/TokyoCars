@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
 const { log } = require("console");
+const walletSchema = require("../../model/wallet");
 
 
 
@@ -242,36 +243,8 @@ exports.restoreproduct = async (req, res) => {
 
 exports.ordermanagement = async (req, res) => {
     try {
-        // const orders = await orderSchema.aggregate([
-        //     {
-        //         $unwind: "$items" // Unwind the items array
-        //     },
-        //     {
-        //         $lookup: {
-        //             from: "users", // Collection name for users
-        //             localField: "user",
-        //             foreignField: "_id",
-        //             as: "user"
-        //         }
-        //     },
-        //     {
-        //         $lookup: {
-        //             from: "products", // Collection name for products
-        //             localField: "items.product",
-        //             foreignField: "_id",
-        //             as: "items.product"
-        //         }
-        //     },
-        //     {
-        //         $unwind: "$user" // If user is an array, unwind it
-        //     },
-        //     {
-        //         $unwind: "$items.product" // If product is an array, unwind it
-        //     }
-        // ]);
-
         
-        const orders = await orderSchema.find().populate("user").populate("items.product").populate("address");
+        const orders = await orderSchema.find().sort({orderDate:-1}).populate("user").populate("items.product").populate("address");
         
         console.log("Unwound Orders:", orders);
 
@@ -291,6 +264,8 @@ exports.ordermanagement = async (req, res) => {
 
 
 exports.paymentChange = async (req, res) => {
+
+    console.log("Payment change router is called");
     console.log("this is my value", req.body);
     const { orderId, paymentStatus, productId } = req.body;
     const order = await orderSchema.findById(orderId).populate("items.product").populate("address").populate("user");
@@ -335,29 +310,116 @@ exports.statusChange = async (req, res) => {
 
     try {
 
-        const order = await orderSchema.findById(orderId).populate("items.product");
+        const order = await orderSchema.findById(orderId);
+
+        console.log("this is my orderrrrrrrrr",order);
+        
         
         const product = await Product.findById(productId);
+
+        console.log("This is the productttttttttt",product);
+        
 
         if(!product){
             res.status(400).json({ success: false, message: "Product not found" });
             return;
         }
+
         
 
         if (!order) {
             return res.status(400).json({ success: false, message: "Order not found" });
         }
 
+        const user = await User.findOne({_id:order.user})
+
+        if(!user){
+            return res.status(400).json({success:false, message: "User not found "});
+        }
+
+        const wallet = await walletSchema.findOne({user:user._id});
+
+        if(!wallet){
+            wallet = new walletSchema({
+
+                user: user._id,
+                balance : 0,
+                wallet_history : []
+
+            })
+        }
+
+        if(orderStatus === "Cancelled"){
+
+            console.log("This is the product stock",product.stock)
+
+            product.stock += order.items.find(item => item.product.toString() === product._id.toString()).quantity;
+
+            await product.save();
+
+            for(let value of order.items){
+
+                value.orderStatus = orderStatus;
+
+                if (order.paymentMethod === 'Razorpay' || order.paymentMethod === 'Wallet') {
+
+
+                    console.log("Product offerrrrr priceeeeeeeeee", product.price);
+
+
+
+                    const refundedAmount = value.price * value.quantity - value.discount + 40;
+
+                    wallet.balance += refundedAmount;
+
+
+                    wallet.wallet_history.push({
+                        date: new Date(),
+                        amount: refundedAmount,
+                        discription: "Order Cancelled Money Credited",
+                        transactionType: "Credited"
+                    })
+
+                }
+
+             
+
+            }
+
+            await wallet.save();
+
+            await order.save();
+
+            const orderIds = order.OrderId;
+
+            console.log("Order cancel updated successfullyyyy");
+
+            return res.json({ success: true, message: "Order status updated successfully", orderIds });
+            
+        }
+
+
+
        for(let value of order.items){
-          if(value.product._id.toString() == product._id.toString()){
+          if(value.product.toString() == product._id.toString()){
               value.orderStatus = orderStatus;
           }
        }
 
        if(orderStatus === "Delivered"){
+
+
+        function Invoice(){
+            const Randominvoice = 10000 + Math.floor(Math.random() * 90000);
+            return `#${Randominvoice}`;
+        }
+
+        const invoice = Invoice();
+
+        order.Invoice = invoice;
+        
         for(let value of order.items){
-            if(value.product._id.toString() == product._id.toString()){
+            if(value.product.toString() == product._id.toString()){
                 value.PaymentStatus = "Paid";
             }
          }
@@ -390,15 +452,44 @@ exports.orderdetail = async (req, res) => {
         return;
     }
 
-    console.log("Order contains", order.items.length, "items.");
-    console.log("First item:", order.items[0]);
+    let productoffer = {};
 
 
-    order.items = Array.isArray(order.items) ? order.items : [];
+    for(let item of order.items){
+     
+        const offerPrice = (() => {
+            const productOffer = typeof item.product.productOffer === "number" && !isNaN(item.product.productOffer)
+                ? item.product.productOffer
+                : 0;
+            const categoryOffer = typeof item.product.categoryofferprice === "number" && !isNaN(item.product.categoryofferprice)
+                ? item.product.categoryofferprice
+                : 0;
+
+            
+            if (productOffer > 0 && categoryOffer > 0) {
+                return Math.min(productOffer, categoryOffer);
+            } else if (productOffer > 0) {
+                return productOffer;
+            } else if (categoryOffer > 0) {
+                return categoryOffer;
+            } else {
+                return 0;
+            }
+        })();
 
 
-    console.log("This is my orderqqqqqqq", order.items);
 
+        productoffer = {
+            ...productoffer,
+            [item.product._id]: offerPrice
+        };
+
+
+       
+   
+    }
+
+    console.log("This is my offer priceeeeeeeeeeeee", productoffer);
 
 
     res.render("admin/orderdetails", {
@@ -406,6 +497,7 @@ exports.orderdetail = async (req, res) => {
         layout: "layouts/admin_layout",
         admin,
         order,
+        productoffer
     });
 
 }

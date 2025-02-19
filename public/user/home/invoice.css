@@ -1,0 +1,113 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+.invoice-container {
+    max-width: 800px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.company-info h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.company-info p,
+.invoice-details p {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.invoice-details {
+    text-align: right;
+}
+
+.customer-info {
+    margin-bottom: 20px;
+}
+
+.billing-to h3 {
+    margin-bottom: 10px;
+}
+
+.invoice-items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.invoice-items th,
+.invoice-items td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.invoice-items th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+}
+
+.invoice-items tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.invoice-total {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.invoice-total p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.invoice-total p:last-child {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.invoice-footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+    color: #666;
+}
+
+.invoice-footer p {
+    margin: 5px 0;
+}
+
+.download-btn {
+    text-align: center;
+    margin-top: 30px;
+}
+
+#downloadBtn {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#downloadBtn:hover {
+    background-color: #0056b3;
+}

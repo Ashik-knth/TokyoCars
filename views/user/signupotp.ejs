@@ -41,6 +41,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
 
     <script>
         const timerElement = document.getElementById("timerValue");
@@ -142,15 +143,23 @@
                 },
                 success: function (response) {
                     if (response.success) {
+
+                    
+                        console.log("Response successs",response.success);
+                        
+
+
                         Swal.fire({
                             icon: 'success',
                             title: 'OTP Verified Successfully',
-                            showconfirmButton: false,
-                            timer: 1500
+                            timer: 1500,
+                            showConfirmButton: false 
 
                         }).then(() => {
 
-                            window.location.href = response.redirectUrl;
+                            console.log("Redirecting to /login");
+                            
+                            window.location.href = "/login";
 
                         });
 

@@ -71,10 +71,7 @@
     text-align: center;
 }
 
-.actives {
-    background-color: #4a90e2;
-    color: white;
-}
+
 
 .active:hover {
     background-color: #357abd;
@@ -84,4 +81,9 @@
 a {
     text-decoration: none;
 
+}
+.active {
+    background-color: #007bff5c; 
+    color: white; 
+    font-weight:600;
 }

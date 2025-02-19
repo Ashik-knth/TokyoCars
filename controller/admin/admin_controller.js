@@ -1,5 +1,7 @@
 const { session } = require("passport");
 const userSchema = require("../../model/usermodel");
+const orderSchema = require("../../model/order")
+const Product = require("../../model/product");
 const bcrypt = require("bcrypt");
 
 
@@ -87,17 +89,181 @@ exports.adminhomelogin = (req, res) => {
 }
 
 }
-exports.dashboard = (req, res) => {
+exports.dashboard = async  (req, res) => {
   
     try{
 
+        const salesReport = await orderSchema.aggregate([
+            
+            {
+                $match: {
+                    'items.orderStatus': 'Delivered'
+                }
+            },
+           
+            {
+                $unwind: '$items'
+            },
+           
+            {
+                $match: {
+                    'items.orderStatus': 'Delivered'
+                }
+            },
+           
+            {
+                $group: {
+                    _id: null, 
+                    totalDeliveredOrders: { $sum: 1 }, 
+                    overallOrderAmount: {
+                        $sum: {
+                            $subtract: [
+                                { $multiply: ['$items.price', '$items.quantity'] }, 
+                                '$items.discount'
+                            ]
+                        }
+                    },
+                    overallDiscount: {
+                        $sum: '$items.discount' 
+                    }
+                }
+            },
+            
+            {
+                $project: {
+                    _id: 0, 
+                    totalDeliveredOrders: 1,
+                    overallOrderAmount: 1,
+                    overallDiscount: 1
+                }
+            }
+        ]);
+
+
+        console.log("this is my dashboarddattaaaaaaa",salesReport);
+        
+        
+        
+
+
+        const topproducts = await orderSchema.aggregate([
+
+            {$match:{"items.orderStatus" : "Delivered"}},
+
+            {$unwind:"$items"},
+
+            {
+                $group:{
+                    _id: "$items.product",
+                    productTitle : { $first: "$items.productTitle"},
+                    totalQuantity : {$sum: "$items.quantity"},
+                    sellCount: { $sum: 1 },
+
+                },
+            },
+
+            {
+                $sort:{totalQuantity:-1}
+            },
+
+           {
+            $limit: 5
+           },
+
+           {
+            $project:{
+                _id: 0,
+                productId : "$_id",
+                productTitle : 1,
+                totalQuantity : 1,
+                sellCount : 1,
+            },
+           },
+
+        ])
+
+
+        console.log("this is my top productsssssssss",topproducts);
+        
+
+        const topCategorys = await orderSchema.aggregate([
+             
+            {$match:{"items.orderStatus" : "Delivered"}},
+
+            {$unwind:"$items"},
+
+
+           {
+            $lookup:{
+                from:"products",
+                localField : "items.product",
+                foreignField: "_id",
+                as: "productDetails"
+            }
+           },
+
+           {$unwind:"$productDetails"},
+
+           {
+            $lookup:{
+                from:"categories",
+                localField: "productDetails.category",
+                foreignField: "_id",
+                as : "CategoryDetails",
+            },
+           },
+
+           {$unwind:"$CategoryDetails"},
+
+           {
+            $group:{
+                _id: "$CategoryDetails.name",
+                totalQuantity : {$sum:"$items.quantity"},
+                Sellcount : {$sum:1},
+
+            },
+           },
+
+           {$sort : {totalQuantity:-1}},
+
+           {$limit:5},
+
+           {
+            $project:{
+                _id:0,
+                categoryName : "$_id",
+                totalQuantity : 1,
+                Sellcount : 1,
+            },
+           },
+
+        ])        
+
+
+        console.log("this is my top categoriesssssss",topCategorys);
+        
+
+
+          const products = await Product.countDocuments();
+          
+
+        const order = await orderSchema.find().sort({ orderDate: -1 }).limit(4).populate("items.product").populate("address").populate("user");
+
+        if(!order){
+            res.status(404).json({error : "Order Not found"});
+        }
     
 
     admin = req.session.admin;
     res.render('admin/dashboard', {
         title: 'Admin Dashboard',
         layout: 'layouts/admin_layout',
-        admin
+        admin,
+        salesReport,
+        products,
+        order,
+        topproducts,
+        topCategorys,
     });
 
 }catch(error){
@@ -108,9 +274,7 @@ exports.dashboard = (req, res) => {
 
 };
 
-// exports.adminhome = (req, res) => {
-//     res.render("admin/index");
-// }
+
 
 exports.orders = (req, res) => {
     res.render("admin/orders");
@@ -154,5 +318,110 @@ exports.logout = (req,res) =>{
         res.redirect('/pageerror')
         
      }
+}
+
+
+exports.cancel_order = async (req,res)=>{
+    console.log("Admin cancel router is called");
+
+    try {
+        const { orderId, productId, message } = req.body;
+        console.log("Cancel order request received", orderId);
+
+        console.log("Cancel order reasonnnnn", message);
+
+
+        console.log("Cancel product request id", productId);
+
+        const user = req.session.Userdata;
+
+        const order = await orderSchema.findById(orderId);
+
+        if (!order) {
+            res.status(400).json({ success: false, message: "Order not found" });
+            return;
+        }
+
+        const productcheck = await Product.findById(productId);
+
+
+
+
+        if (!productcheck) {
+            res.status(400).json({ success: false, message: "Product not found" });
+            return;
+        }
+
+        console.log("This is the product  ", productcheck);
+
+        productcheck.stock += order.items.find(item => item.product.toString() === productcheck._id.toString()).quantity;
+
+        await productcheck.save();
+
+
+        let wallet = await walletSchema.findOne({ user: user._id });
+
+        if (!wallet) {
+
+            wallet = new walletSchema({
+                user: user._id,
+                balance: 0,
+                wallet_history: []
+            })
+        }
+
+
+
+        for (let product of order.items) {
+            if (product.product._id.toString() === productcheck._id.toString()) {
+
+                product.orderStatus = "Cancelled";
+
+                product.CancelorderReason = message;
+
+                if (order.paymentMethod === 'Razorpay' || order.paymentMethod === 'Wallet') {
+
+
+                    console.log("Product offerrrrr priceeeeeeeeee", product.price);
+
+
+
+                    const refundedAmount = product.price * product.quantity - product.discount + 40;
+
+                    wallet.balance += refundedAmount;
+
+
+                    wallet.wallet_history.push({
+                        date: new Date(),
+                        amount: refundedAmount,
+                        discription: "Order Cancelled Money Credited",
+                        transactionType: "Credited"
+                    })
+
+                }
+
+                console.log("Product cancelled successfully", product.orderStatus);
+
+            }
+
+        }
+
+        console.log("Walletissssss", wallet);
+
+        await wallet.save();
+
+
+        console.log("Wallet balance updated successfully", wallet.balance);
+
+
+        await order.save();
+
+        res.status(200).json({ success: true, message: "Order cancelled successfully" });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+    
 }
 

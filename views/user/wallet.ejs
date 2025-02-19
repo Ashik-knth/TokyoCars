@@ -1,0 +1,47 @@
+<div class="wallet-container">
+    <div class="wallet-header">
+        <h1>My Wallet</h1>
+        <% if (wallets.length!==0) { %>
+
+            <div class="balance"><%= wallets[0].balance%></div>
+         
+        <% } %>
+        
+    </div>
+
+    <div class="transactions">
+        <h2>Recent Transactions</h2>
+
+        <% if (wallets.length!==0) { %>
+         
+       
+
+        <% wallets.forEach(elements => { %>
+
+            <% if (elements.wallet_history.transactionType=="Credited") { %>
+
+                <div class="transaction-item">
+                    <div>
+                        <h5><%= elements.wallet_history.discription %></h5>
+                        <p><%= elements.wallet_history.date.toDateString()%></p>
+                    </div>
+                    <span class="amount positive ">₹+<%= elements.wallet_history.amount %></span>
+                </div>
+             
+            <% } else { %>
+
+                <div class="transaction-item">
+                    <div>
+                        <h5><%= elements.wallet_history.discription %></h5>
+                        <p><%= elements.wallet_history.date.toDateString()%></p>
+                    </div>
+                    <span class="amount negative">₹-<%= elements.wallet_history.amount %></span>
+                </div>
+            
+            <% } %>
+
+        <% }) %>
+
+        <% } %>
+    </div>
+</div>

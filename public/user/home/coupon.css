@@ -1,0 +1,95 @@
+.coupon-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    margin-top: 45px;
+}
+
+.coupon-header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.coupon-header p {
+    color: #666;
+}
+
+.coupon-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.coupon-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.coupon-card::before {
+    content: "USED";
+    position: absolute;
+    top: 20px;
+    right: -35px;
+    background: #ff4444;
+    color: white;
+    padding: 5px 40px;
+    transform: rotate(45deg);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.coupon-store {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.coupon-code {
+    background: #f0f0f0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 1.1rem;
+    color: #666;
+    margin: 10px 0;
+    display: inline-block;
+}
+
+.coupon-discount {
+    font-size: 1.4rem;
+    color: #333;
+    margin: 10px 0;
+}
+
+.coupon-expiry {
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.used-date {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    .coupon-container {
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
+    
+    .coupon-header h1 {
+        font-size: 1.5rem;
+    }
+}

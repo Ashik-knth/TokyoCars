@@ -113,3 +113,40 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+.download-btn {
+    background-color: #4CAF50; 
+    border: none; 
+    color: white; 
+    padding: 12px 24px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 16px; 
+    font-weight: bold; 
+    border-radius: 8px; 
+    cursor: pointer;
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+
+.download-btn:hover {
+    background-color: #45a049; 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); 
+}
+
+
+.download-btn:active {
+    background-color: #3e8e41; 
+    transform: translateY(0); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+}

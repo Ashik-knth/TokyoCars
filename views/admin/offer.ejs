@@ -1,0 +1,676 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-12">
+                <div class="home-tab">
+                    <div class="d-sm-flex align-items-center justify-content-between border-bottom "
+                        style="width: 40%; margin-left: 17%; margin-top: 2%;">
+                        <ul class="nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview"
+                                    role="tab" aria-controls="overview" aria-selected="true">Offer Management</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#product-offer-admin"
+                                    role="tab" aria-selected="false">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#category-offer-admin"
+                                    role="tab" aria-selected="false">Categories</a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link border-0" id="more-tab" data-bs-toggle="tab" href="#referrals"
+                                    role="tab" aria-selected="false">Referrals</a>
+                            </li> -->
+                        </ul>
+                    </div>
+
+                    <div class="tab-content">
+                        <div id="product-offer-admin" class="tab-pane">
+                            <div class="product-offer-header">
+                                <h1>Products Offer </h1>
+                            </div>
+
+                            <div class="products-offer-grid">
+                               
+                                <% product.forEach(element => { %>
+                                    <div class="product-offer-card">
+                                        <img src="/uploads/<%= element.productImage[0] %>" alt="Product 1" class="product-offer-image">
+                                        <h3 class="product-offer-title"> Product Name : <%= element.productName %></h3>
+                                        <div class="product-offer-price">Price: ₹<%= element.regularPrice %></div>
+                                        <div class="product-offer-stock"> 
+                                            Product Offer: <%= element.productOffer > 0 ? element.productOffer : "No Offer" %>
+                                        </div>
+                                        <span class="product-offer-status-badge <%= element.stock > 0 ? 'product-offer-status-active' : 'product-offer-status-inactive' %>">
+                                            <%= element.stock > 0 ? "Active" : "Inactive" %>
+                                        </span>
+                                        <div class="product-offer-container">
+                                            <label class="product-offer-label">Apply Offer</label>
+                                            <select class="product-offer-select" id="product-offer-select-<%= element._id %>">
+                                                <option value="">Select an offer</option>
+                                                <% offer.forEach(elements => { %>
+                                                    <option value="<%= elements._id %>">
+                                                        <%= elements.name %> - <%= elements.discount %> % OFF
+                                                    </option>
+                                                <% }) %>
+                                            </select>
+                                            <button class="product-apply-offer-btn" onclick="Applyoffer('<%= element._id %>')">Apply Offer</button>
+                                        </div>
+                                    </div>
+                                <% }) %>
+
+                            </div>
+                        </div>
+
+                        <div id="category-offer-admin" class="tab-pane">
+                            <div class="category-offer-header">
+                                <h1>Category Offer </h1>
+                            </div>
+
+
+
+                            <div class="category-offer-grid">
+                                <!-- Category Offer Cards (repeat these blocks as necessary) -->
+
+                                <% category.forEach(element=> { %>
+
+
+                                    <div class="category-offer-card">
+                                        <h3 class="category-offer-title">
+                                            <%= element.name %>
+                                        </h3>
+                                        <span
+                                            class="category-offer-status-badge <%= element.isDeleted == false ? 'category-offer-status-active' : 'category-offer-status-inactive' %>">
+                                            <%= element.isDeleted==false ? "Active" : "Inactive" %>
+                                        </span>
+                                        <div class="category-offer-container">
+                                            <label class="category-offer-label">Apply Offer</label>
+                                            <select id="category-offer-select" class="category-offer-selection-<%= element._id %>">
+                                                <option value="">Select an offer</option>
+                                                <% offer.forEach(offerElement=> { %>
+                                                    <option id="offer-id" value="<%= offerElement._id %>">
+                                                        <%= offerElement.name %> - <%= offerElement.discount %>% OFF
+                                                    </option>
+                                                    <% }) %>
+                                            </select>
+                                            <button class="category-apply-offer-btn"
+                                                onclick="CategoryOfferApply('<%= element._id %>')">Apply Offer</button>
+                                        </div>
+                                    </div>
+
+
+                                    <% }) %>
+                                        <!-- Repeat similar category offer cards here -->
+                            </div>
+
+                        </div>
+
+                        <div id="overview" class="tab-pane active">
+                            <div id="overview" class="tab-pane active">
+                                <div class="offer-header">
+                                    <h1 class="offer-title">Offer Management</h1>
+                                    <button class="offer-btn offer-btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal" data-bs-whatever="@mdo">+ Add New Offer</button>
+                                </div>
+
+                                <!-- Single .offer-grid container -->
+                                <div class="offer-grid">
+                                    <!-- Active Coupon Card -->
+                                    <% offer.forEach(element=> { %>
+
+
+                                        <div class="offer-card">
+                                            <div class="offer-header">
+                                                <span class="offer-code">
+                                                    <%= element.name %>
+                                                </span>
+                                                <% if (Date.now()<element.endDate) { %>
+                                                    <span class="offer-status-badge offer-status-active">Active</span>
+                                                    <% } %>
+                                            </div>
+                                            <div class="offer-details">
+                                                <div class="offer-detail-row">
+                                                    <span class="offer-detail-label">Discount</span>
+                                                    <span class="offer-detail-value">
+                                                        <%= element.discount %> % OFF
+                                                    </span>
+                                                </div>
+                                                <div class="offer-detail-row">
+                                                    <span class="offer-detail-label">Valid Until</span>
+                                                    <span class="offer-detail-value">
+                                                        <%= element.endDate.toDateString() %>
+                                                    </span>
+                                                </div>
+
+                                            </div>
+                                            <div class="offer-actions">
+                                                <button class="offer-action-btn" data-bs-toggle="modal"
+                                                    data-bs-target="#edit-Modal" data-bs-whatever="@mdo"
+                                                    data-offer-name="<%= element.name %>"
+                                                    data-offer-discount="<%= element.discount %>"
+                                                    data-offer-Id="<%= element._id %>"
+                                                    data-offer-endDate="<%= element.endDate.toDateString() %>">✏️
+                                                    Edit</button>
+                                                <button class="offer-action-btn"
+                                                    onclick="Deleteoffer('<%= element._id %>')">🗑️ Delete</button>
+
+                                            </div>
+                                        </div>
+
+                                        <% }) %>
+
+
+                                            <!-- Repeat more cards here -->
+
+
+
+                                            <!-- Add more cards as needed -->
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ADD NEW OFFER MODAL -->
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Offer</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="couponForm" action="/admin/addoffer" method="post">
+                    <div class="mb-3">
+
+                        <label for="coupon-name" class="col-form-label">Offer Name:</label>
+                        <input type="text" class="form-control" id="coupon-name" placeholder="eg. SUMMER2025"
+                            name="name">
+
+                        <label for="discount-name" class="col-form-label">Discount:</label>
+                        <input type="text" class="form-control" id="discount-name" placeholder="eg. 25% OFF"
+                            name="discount">
+
+                        <label for="valid-until-name" class="col-form-label">Valid Until:</label>
+                        <input type="date" class="form-control" id="valid-until-name" name="date">
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitBtn">Add Offer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- EDIT OFFER MODAL -->
+
+<div class="modal fade" id="edit-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Offer </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-couponForm" action="/admin/editoffer" method="post">
+                    <input type="hidden" id="edit-id" name="editID">
+                    <div class="mb-3">
+                        <label for="edit-coupon" class="col-form-labels">Coupon Code:</label>
+                        <input type="text" class="form-control" id="edit-coupon" name="offerName">
+
+                        <label for="edit-discount" class="col-form-labels">Discount</label>
+                        <input type="text" class="form-control" id="edit-discount" name="discountName">
+
+                        <label for="edit-date" class="col-form-labels">Valid Until</label>
+                        <input type="date" class="form-control" id="edit-date" name="dateName">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="edit-btn">Edit Offer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+<script>
+    // Bootstrap tab switching with JavaScript (optional, but will work correctly)
+    document.querySelectorAll('.nav-link').forEach(tab => {
+        tab.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent the default anchor action
+
+            // Remove the 'active' class from all tabs and panes
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            // Add 'active' class to the clicked tab
+            this.classList.add('active');
+
+            // Show the related tab content
+            const target = document.querySelector(this.getAttribute('href'));
+            target.classList.add('active');
+        });
+    });
+
+
+    const couponForm = document.getElementById('couponForm');
+    const labelinput = document.querySelectorAll('.col-form-label');
+    const submitBtn = document.getElementById('submitBtn');
+
+
+
+    const removeErrorMessage = (label) => {
+        const errorElement = label.querySelector('.validation-error');
+        if (errorElement) {
+            errorElement.remove();
+        }
+    };
+
+
+    document.getElementById('coupon-name').addEventListener('input', () => {
+        removeErrorMessage(labelinput[0]);
+    });
+
+    document.getElementById('discount-name').addEventListener('input', () => {
+        removeErrorMessage(labelinput[1]);
+    });
+
+    document.getElementById('valid-until-name').addEventListener('input', () => {
+        removeErrorMessage(labelinput[2]);
+    });
+
+    submitBtn.addEventListener('click', (e) => {
+
+
+        console.log('Button clicked');
+
+
+        e.preventDefault();
+
+
+        document.querySelectorAll('.validation-error').forEach(element => {
+            element.remove();
+        })
+
+        const couponName = document.getElementById('coupon-name').value.trim();
+        const discountName = document.getElementById('discount-name').value.trim();
+        const validUntilName = document.getElementById('valid-until-name').value.trim();
+
+
+
+        const validUntilDate = new Date(validUntilName);
+        validUntilDate.setHours(0, 0, 0, 0);
+
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        let isValid = true;
+
+        // Helper function to add error messages
+        const addErrorMessage = (label, message) => {
+            const errorElement = document.createElement('div');
+            errorElement.style.color = 'red';
+            errorElement.style.fontSize = '12px';
+            errorElement.classList.add('validation-error');
+            errorElement.textContent = message;
+            label.appendChild(errorElement);
+        };
+
+        // Validate coupon name
+        if (couponName === '') {
+            addErrorMessage(labelinput[0], 'Please enter a valid Offer name');
+            isValid = false;
+        } else if (couponName.length < 3) {
+            addErrorMessage(labelinput[0], 'Offer name must be at least 3 characters');
+            isValid = false;
+        } else if (couponName.length > 20) {
+            addErrorMessage(labelinput[0], 'Offer name must be less than 20 characters');
+        }
+
+        // Validate discount
+        if (discountName === '') {
+            addErrorMessage(labelinput[1], 'Please enter a valid discount');
+            isValid = false;
+        } else if (discountName < 4) {
+            addErrorMessage(labelinput[1], 'Please enter above 4% discount')
+            isValid = false;
+        } else if (discountName < 0) {
+            addErrorMessage(labelinput[1], 'Please enter a valid discount')
+            isValid = false;
+        } else if (discountName >= 100) {
+            addErrorMessage(labelinput[1], 'Please enter a below The 100 discount')
+            isValid = false;
+        }
+
+        if (validUntilName === '') {
+            addErrorMessage(labelinput[2], 'Please enter a valid date');
+            isValid = false;
+        } else if (validUntilDate < currentDate) {
+            addErrorMessage(labelinput[2], 'Please enter a future date')
+            isValid = false;
+        } else if (validUntilDate <= currentDate) {
+            addErrorMessage(labelinput[2], 'Please enter a future date')
+            isValid = false;
+        }
+
+        if (isValid) {
+            couponForm.submit();
+        }
+    });
+
+
+    const editBtn = document.getElementById('edit-btn');
+
+    const editCouponForm = document.getElementById('edit-couponForm');
+
+
+
+    // EDIT MODAL VALIDATION
+
+    const label = document.querySelectorAll('.col-form-labels');
+
+    editBtn.addEventListener('click', (e) => {
+        console.log('Edit Button clicked');
+        e.preventDefault();
+
+        document.querySelectorAll('.validation-error').forEach(element => {
+            element.remove();
+        });
+
+        const couponName = document.getElementById('edit-coupon').value.trim();
+        const discountName = document.getElementById('edit-discount').value.trim();
+        const validUntilName = document.getElementById('edit-date').value.trim();
+
+
+        const validUntilDate = new Date(validUntilName);
+        validUntilDate.setHours(0, 0, 0, 0);
+
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        let isValid = true;
+
+        // Helper function to add error messages
+        const addErrorMessage = (label, message) => {
+            const errorElement = document.createElement('div');
+            errorElement.style.color = 'red';
+            errorElement.style.fontSize = '12px';
+            errorElement.classList.add('validation-error');
+            errorElement.textContent = message;
+            label.appendChild(errorElement);
+        };
+
+        // Validate coupon name
+        if (couponName === '') {
+            addErrorMessage(label[0], 'Please enter a valid coupon code');
+            isValid = false;
+        } else if (couponName.length < 3) {
+            addErrorMessage(label[0], 'Coupon code must be at least 3 characters');
+            isValid = false;
+        } else if (couponName.length > 20) {
+            addErrorMessage(label[0], 'Coupon code must be less than 20 characters');
+        }
+
+        // Validate discount
+        if (discountName === '') {
+            addErrorMessage(label[1], 'Please enter a valid discount');
+            isValid = false;
+        } else if (discountName < 4) {
+            addErrorMessage(label[1], 'Please enter above 4% discount');
+            isValid = false;
+        } else if (discountName < 0) {
+            addErrorMessage(label[1], 'Please enter a valid discount');
+            isValid = false;
+        } else if (discountName >= 100) {
+            addErrorMessage(label[1], 'Please enter a below The 100 discount');
+            isValid = false;
+
+        }
+
+        // Validate date
+        if (validUntilName === '') {
+            addErrorMessage(label[2], 'Please enter a valid date');
+            isValid = false;
+        } else if (validUntilDate < currentDate) {
+            addErrorMessage(label[2], 'Please enter a future date');
+            isValid = false;
+        } else if (validUntilDate <= currentDate) {
+            addErrorMessage(label[2], 'Please enter a future date');
+            isValid = false;
+        }
+
+        if (isValid) {
+            editCouponForm.submit();
+        }
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Document loaded");
+
+        document.querySelectorAll(".offer-action-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                console.log("Edit button clicked");
+
+                const offerName = this.getAttribute("data-offer-name");
+                const offerDiscount = this.getAttribute("data-offer-discount");
+                const offerDate = this.getAttribute("data-offer-endDate");
+                const offerId = this.getAttribute("data-offer-Id");
+
+                console.log(offerName);
+                console.log(offerDiscount);
+                console.log(offerDate);
+                console.log(offerId);
+
+                const parsedDate = moment(offerDate, "ddd MMM DD YYYY");
+
+                const formatedDate = parsedDate.format("YYYY-MM-DD");
+
+                document.getElementById("edit-coupon").value = offerName;
+                document.getElementById("edit-discount").value = offerDiscount;
+                document.getElementById("edit-date").value = formatedDate;
+                document.getElementById("edit-id").value = offerId;
+
+            });
+        });
+    });
+
+
+    async function Deleteoffer(offerid) {
+
+        console.log("Delete offer clicked", offerid);
+
+
+        try {
+
+            const response = fetch('/admin/deleteoffer', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ offerid })
+            });
+
+            const result = await response;
+
+            const data = await result.json();
+
+            console.log("This is delete offer", data);
+
+
+
+            if (result.status === 200) {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-center",
+                    showDuration: "300",
+                    hideDuration: "1000",
+                    timeOut: "5000",
+                    extendedTimeOut: "1000",
+                    showEasing: "swing",
+                    hideEasing: "linear",
+                    onHidden: function () {
+                        location.reload();
+                    }
+                };
+
+                toastr.success(data.message);
+            } else {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-center",
+                    showDuration: "300",
+                    hideDuration: "1000",
+                    timeOut: "5000",
+                    extendedTimeOut: "1000",
+                    showEasing: "swing",
+                    hideEasing: "linear",
+                    onHidden: function () {
+                        location.reload();
+                    }
+                };
+
+                toastr.error(data.error);
+            }
+
+        } catch (error) {
+            console.log("This is delete offer", error);
+        }
+
+    }
+
+
+
+    async function Applyoffer(productId) {
+        console.log("Apply offer clicked for product:", productId);
+
+        
+        const selectElement = document.getElementById(`product-offer-select-${productId}`);
+        const offerId = selectElement.value;
+
+        console.log("This is offer id:", offerId);
+        console.log("This is product id:", productId);
+
+        try {
+           
+            const response = await fetch('/admin/apply-product-offer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ productId, offerId })
+            });
+
+            const result = await response.json();
+
+            if (response.status === 200) {
+                toastr.success(result.message);
+            } else {
+                toastr.error(result.error);
+            }
+        } catch (error) {
+            console.error("Error applying offer:", error);
+        }
+    }
+
+
+    async function CategoryOfferApply(CategoryId) {
+
+        console.log("This is my category offer apply function", CategoryId);
+
+        const offer = document.querySelector(`.category-offer-selection-${CategoryId}`);
+
+       const offerId = offer.value;
+
+        console.log("This is my offer id", offerId);
+
+        try {
+
+            const response = await fetch('/admin/apply-category-offer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({ CategoryId, offerId })
+
+            });
+
+            console.log("chummmmmmmm", response);
+
+
+            const result = await response;
+
+            console.log("aaaaaaaaaa", result);
+
+            const data = await result.json();
+
+
+            if (result.status === 200) {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-center",
+                    showDuration: "300",
+                    hideDuration: "1000",
+                    timeOut: "5000",
+                    extendedTimeOut: "1000",
+                    showEasing: "swing",
+                    hideEasing: "linear",
+                    // onHidden: function () {
+                    //     location.reload();
+                    // }
+
+                };
+
+                toastr.success(data.message);
+            } else {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-center",
+                    showDuration: "300",
+                    hideDuration: "1000",
+                    timeOut: "5000",
+                    extendedTimeOut: "1000",
+                    showEasing: "swing",
+                    hideEasing: "linear",
+                    onHidden: function () {
+                        location.reload();
+                    }
+                };
+
+                toastr.error(data.error);
+            }
+
+        } catch (error) {
+            console.log("This is apply offer error", error);
+        }
+
+    }
+
+</script>

@@ -222,6 +222,19 @@
 </html>
 
 
+<select class="order-status-select"
+                                onchange="handleOrderStatusChange(this.value, '<%= order._id %>', '<%= element.product._id %>')">
+                                <option value="<%= element.orderStatus %>" <%=element.orderStatus==='processing'
+                                    ? 'selected' : '' %>>
+                                    <%= element.orderStatus %>
+                                </option>
+
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+
+
 function removeCoupon(id) {
     console.log("this is our coupon id",id)
 
@@ -252,3 +265,23 @@ function removeCoupon(id) {
         }
     })
 }
+
+
+
+
+// fetch('/razorpay',{
+    //     method : 'POST',
+    //     headers : {
+    //         'Content-Type' : 'application/json'
+    //     },
+    //     body : JSON.stringify({
+
+    //         PayableAmount: totalPayable,
+    //         SubtotalAmount: Subtotal,
+    //         selectedAddress: selectedAddressValue,
+    //         paymentMethod: paymentMethodValue,
+    //         couponAmount: couponAmount,
+    //         cartId: cartId,
+    //         couponId: CouponID
+    //     })
+    // })

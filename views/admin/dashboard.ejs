@@ -1,52 +1,698 @@
+<main class="main-content">
 
-    <main class="main-content">
-        <div class="dashboard-cards">
+    <div>
+        <button class="download-btn" onclick="exportToExcel()">Download as Excel</button>
+        <button class="download-btn" onclick="exportToPDF()">Download as PDF</button>
+    </div>
+
+    <div class="dashboard-cards">
+        <% salesReport.forEach(element=> { %>
+
+
             <div class="card">
-                <div class="card-title">Total Sales</div>
-                <div class="card-value">$24,500</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Total Orders</div>
-                <div class="card-value">150</div>
+                <div class="card-title">Overall Sales Count </div>
+
+                <div class="card-value" id="salesCount">
+                    <%= salesReport.length>0 ? element.totalDeliveredOrders : 0 %>
+                </div>
             </div>
             <div class="card">
                 <div class="card-title">Total Products</div>
-                <div class="card-value">75</div>
+                <div class="card-value" id="totalProducts">
+                    <%= products ? products : 0 %>
+                </div>
             </div>
-            <div class="card">
-                <div class="card-title">Total Users</div>
-                <div class="card-value">1,240</div>
-            </div>
-        </div>
 
-        <div class="recent-orders">
-            <h2>Recent Orders</h2>
-            <table class="table">
-                <thead>
+            <div class="card">
+                <div class="card-title">Over all Discount</div>
+                <div class="card-value" id="overallDiscount">
+            
+                    <%= salesReport.length>0 ? element.overallDiscount : 0 %>
+            
+                </div>
+            </div>
+
+            <% }) %>
+    </div>
+
+    <div>
+
+        <select class="custom-select" onchange="handledate(this.value)">
+            <option>Select an option</option>
+            <option value="Day">Day</option>
+            <option value="Week">Weekly</option>
+            <option value="Month">Monthly</option>
+            <option value="Year">Yearly</option>
+            <option value="CustomDate">Custom Date</option>
+        </select>
+
+        <button class="btn" onclick="sendDataToBackend(this.value)">Submit</button>
+
+    </div>
+
+    <input type="text" id="calendarInput" style="display: none;" placeholder="Select a date range">
+
+    <h1>Top Products</h1>
+
+    <div class="dashboard-topproducts">
+
+        <% topproducts.forEach(element=> { %>
+
+
+            <div class="card">
+                <div class="card-title">Product name</div>
+
+                <div class="card-value" id="salesCount">
+                    <%= element.productTitle ? element.productTitle : "No Products" %>
+                </div>
+                <div class="card-title">Product Sell Count</div>
+                <div class="card-value" id="salesCount">
+                    <%= element.sellCount ? element.sellCount : 0 %>
+                </div>
+            </div>
+            <% }) %>
+    </div>
+
+
+    <h1>Top Category</h1>
+
+    <div class="dashboard-top-category">
+
+        <% topCategorys.forEach(element=> { %>
+
+
+            <div class="card">
+                <div class="card-title">Category name</div>
+
+                <div class="card-value" id="salesCount">
+                    <%= element.categoryName ? element.categoryName : "No Category" %>
+                </div>
+                <div class="card-title">Ctegory Base sell Count</div>
+                <div class="card-value" id="salesCount">
+                    <%= element.Sellcount ? element.Sellcount : 0 %>
+                </div>
+            </div>
+            <% }) %>
+    </div>
+
+
+
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <div class="recent-orders">
+        <h2>Recent Orders</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Payment Method</th>
+                </tr>
+            </thead>
+            <tbody id="orderTable">
+
+                <% order.forEach(element=> { %>
+
+
+
                     <tr>
-                        <th>Order ID</th>
-                        <th>Customer</th>
-                        <th>Product</th>
-                        <th>Amount</th>
-                        <th>Status</th>
+
+
+
+                        <td>
+                            <%= element.OrderId %>
+                        </td>
+
+                        <td>
+
+                            <%= element.orderDate.toDateString() %>
+
+                        </td>
+                        <td>
+                            <%= element.user.username %>
+                        </td>
+                        <td>
+                            <%= element.items[0].product.productName %>
+                        </td>
+                        <td>₹<%=parseInt(element.payableAmount) %>
+                        </td>
+                        <td>
+                            <span class="<%= element.items[0].orderStatus === 'Delivered' ? 'status completed' : 
+                                        element.items[0].orderStatus === 'Processing' ? 'status pending' : 
+                                        element.items[0].orderStatus === 'Cancelled' ? 'status cancelled' : '' %>">
+                                <%= element.items[0].orderStatus %>
+                            </span>
+                        </td>
+
+                        <td>
+                            <%= element.paymentMethod %>
+                        </td>
+
+
                     </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>#12345</td>
-                        <td>John Doe</td>
-                        <td>Product A</td>
-                        <td>$120</td>
-                        <td><span class="status completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>#12346</td>
-                        <td>Jane Smith</td>
-                        <td>Product B</td>
-                        <td>$200</td>
-                        <td><span class="status pending">Pending</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </main>
+                    <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div style="width: 500px;"><canvas id="dimensions"></canvas></div><br />
+
+    <script type="module" src="dimensions.js"></script>
+
+    <script>
+
+
+
+        let flatpickrInstance = null;
+
+
+        async function handledate(Selection) {
+
+            console.log("helllllllooooo");
+
+
+
+            const calendarInput = document.getElementById('calendarInput');
+
+            const button = document.querySelector('.btn');
+
+            if (Selection === 'CustomDate') {
+                calendarInput.style.display = 'block';
+                calendarInput.style.marginBottom = '12px';
+
+                if (!flatpickrInstance) {
+                    flatpickrInstance = flatpickr(calendarInput, {
+                        mode: "range",
+                        dateFormat: "Y-m-d",
+                        onChange: function (selectedDates, dateStr, instance) {
+                            console.log("Selected Date Range:", dateStr);
+
+                            button.value = dateStr;
+
+                            calendarInput.style.display = 'none';
+
+                        }
+                    });
+                }
+            } else if (Selection == 'Day') {
+
+                button.value = Selection;
+
+            }
+
+        }
+
+
+
+
+
+        async function sendDataToBackend() {
+
+
+
+            const selectedValue = document.querySelector('.custom-select').value;
+            const calendarInput = document.getElementById('calendarInput');
+
+            let payload = {};
+
+            let labels = [];
+
+            if (selectedValue === 'CustomDate') {
+
+                const [startDate, endDate] = calendarInput.value.split('to');
+                const trimmedStartDate = startDate ? startDate.trim() : null;
+                const trimmedEndDate = endDate ? endDate.trim() : null;
+
+                console.log("This is trimmedStartDate", trimmedStartDate);
+                console.log("This is trimmedEndDate", trimmedEndDate);
+
+
+
+                const start = new Date(trimmedStartDate);
+                start.setHours(0, 0, 0, 0);
+
+                let end = new Date(trimmedEndDate);
+                end.setHours(23, 59, 59, 999);
+
+                console.log("End date isssss", end);
+
+
+                if (trimmedEndDate == null) {
+
+                    end = new Date(trimmedStartDate);
+                    end.setHours(23, 59, 59, 999);
+
+                }
+
+
+                payload = { startDate: start, endDate: end };
+
+            } else if (selectedValue === 'Day') {
+
+                filterType = 1;
+                const currentDate = new Date().toISOString().split('T')[0];
+                const start = new Date(currentDate);
+                start.setHours(0, 0, 0, 0);
+                const end = new Date(currentDate);
+                end.setHours(23, 59, 59, 999);
+
+                let current = new Date(currentDate);
+
+                let fullDayName = current.toLocaleDateString('en-US', { weekday: 'long' });
+
+                labels.push(fullDayName)
+
+                payload = { startDate: start, endDate: end, filterType };
+
+                console.log("Payload:", payload);
+
+
+            } else if (selectedValue === 'Week') {
+
+                const today = new Date();
+
+                const startOfWeek = new Date(today);
+                startOfWeek.setDate(today.getDate() - today.getDay());
+                startOfWeek.setHours(0, 0, 0, 0);
+
+                const endOfWeek = new Date(today);
+
+                endOfWeek.setDate(today.getDate() + (6 - today.getDay()));
+                endOfWeek.setHours(23, 59, 59, 999);
+
+                const startDate = startOfWeek.toISOString().split('T')[0];
+                const endDate = endOfWeek.toISOString().split('T')[0];
+
+
+                console.log("Start of Week:", startDate);
+                console.log("End of Week:", endDate);
+
+                labels.push("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+
+                payload = { startDate, endDate };
+
+            } else if (selectedValue === 'Month') {
+
+                const today = new Date();
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                startOfMonth.setHours(0, 0, 0, 0);
+                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                endOfMonth.setHours(23, 59, 59, 999);
+
+                const startDate = startOfMonth.toISOString().split('T')[0];
+                const endDate = endOfMonth.toISOString().split('T')[0];
+
+                console.log("Start of Month:", startDate);
+                console.log("End of Month:", endDate);
+                let fullMonthName = today.toLocaleDateString('en-US', { month: 'long' });
+
+                labels.push(fullMonthName)
+
+
+                payload = { startDate, endDate };
+
+            } else if (selectedValue === 'Year') {
+
+                const today = new Date();
+
+                const startOfYear = new Date(today.getFullYear(), 0, 1);
+                startOfYear.setHours(0, 0, 0, 0);
+
+                const endOfYear = new Date(today.getFullYear(), 11, 31);
+                endOfYear.setHours(23, 59, 59, 999);
+
+                const startDate = startOfYear.toISOString().split('T')[0];
+                const endDate = endOfYear.toISOString().split('T')[0];
+
+                console.log("Start of Year:", startDate);
+                console.log("End of Year:", endDate);
+
+                let currentYear = today.getFullYear();
+
+                labels.push(currentYear)
+
+
+                payload = { startDate, endDate };
+
+            } else {
+                toastr.error("Invalid filter option selected.");
+                return;
+            }
+
+            try {
+                const result = await fetch('/admin/filterdatebased', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                console.log("This is the result", result);
+
+
+                if (!result.ok) {
+                    toastr.error("No Order details found.");
+                    return;
+                }
+
+                const response = await result.json();
+
+                console.log("Successssss:", response);
+
+                let keysArray = Object.keys(response.order[0]);
+
+                let valuesArray = Object.values(response.order[0]);
+
+
+
+
+                toastr.options = {
+                    toastClass: "custom-toast",
+                    timeout: 3000,
+                    position: "top-center"
+
+                }
+
+                if (response.success) {
+
+                    toastr.success(response.message, "Success", {
+
+                        timeOut: 1000,
+
+                        onHidden: function () {
+
+                            updateDashboard(response);
+                            updateChart(response, labels, keysArray, valuesArray);
+                        }
+                    });
+
+                }else{
+                    toastr.error(response.message, "Error", {
+
+                        timeOut: 1000,
+
+                        onHidden: function () {
+
+                            updateDashboard(response);
+                            updateChart(response, labels, keysArray, valuesArray);
+                        }
+                    });
+                }
+
+
+            } catch (error) {
+                console.error("Error:", error.message);
+                toastr.error(error.message || "An error occurred while communicating with the server.");
+            }
+        }
+
+
+        function exportToExcel() {
+
+            const salesCount = document.getElementById('salesCount').innerText;
+            const totalProducts = document.getElementById('totalProducts').innerText;
+            const overallDiscount = document.getElementById('overallDiscount').innerText;
+
+
+            const dashboardData = [
+                ['Overall Sales Count', salesCount],
+                ['Total Products', totalProducts],
+                ['Overall Discount', overallDiscount]
+            ];
+
+            console.log("This is the dashboardData", dashboardData);
+
+
+
+            const workbook = XLSX.utils.book_new();
+
+            console.log("this is the workbook", workbook);
+
+
+
+            const dashboardSheet = XLSX.utils.aoa_to_sheet(dashboardData);
+
+            console.log("this is the dashboardSheet", dashboardSheet);
+
+            XLSX.utils.book_append_sheet(workbook, dashboardSheet, 'Dashboard');
+
+
+            const table = document.getElementById('orderTable');
+
+            console.log("this is the table", table);
+
+
+
+            const tableSheet = XLSX.utils.table_to_sheet(table.parentElement);
+
+            console.log("this is the tableSheet", tableSheet);
+
+
+
+            XLSX.utils.book_append_sheet(workbook, tableSheet, 'Orders');
+
+
+            XLSX.writeFile(workbook, 'Sales_Report.xlsx');
+        }
+
+        function exportToPDF() {
+            console.log("Exporting to PDF...");
+
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF("l", "mm", "a4");
+
+            const salesCount = document.getElementById('salesCount').innerText.trim();
+            const totalProducts = document.getElementById('totalProducts').innerText.trim();
+            const overallDiscount = document.getElementById('overallDiscount').innerText.trim();
+
+            doc.text('Sales Report', 10, 20);
+            doc.text(`Overall Sales Count: ${salesCount}`, 10, 30);
+            doc.text(`Total Products: ${totalProducts}`, 10, 50);
+            doc.text(`Overall Discount: ${overallDiscount}`, 10, 60);
+
+            let yPos = 70;
+
+            const table = document.querySelector('.table');
+            const rows = [];
+            table.querySelectorAll('thead tr, tbody tr').forEach(row => {
+                const rowData = [];
+                row.querySelectorAll('th, td').forEach(cell => {
+                    rowData.push(cell.innerText.trim().replace('₹', ''))
+                    console.log("This is the row data", rowData);
+                });
+                rows.push(rowData);
+
+
+
+            });
+
+            console.log("This is the rows ", rows);
+
+
+
+
+            doc.autoTable({
+                head: [rows[0]],
+                body: rows.slice(1),
+                startY: 90,
+                styles: { fontSize: 10, overflow: 'linebreak', cellPadding: 3 },
+                columnStyles: {
+                    0: { cellWidth: 30 },
+                    1: { cellWidth: 30 }, // Date
+                    2: { cellWidth: 40 }, // Customer
+                    3: { cellWidth: 40 }, // Product
+                    4: { cellWidth: 20 }, // Amount
+                    5: { cellWidth: 30 }, // Status
+                    6: { cellWidth: 50, wordBreak: 'break-word' }
+                },
+            });
+
+            doc.save('Sales_Report.pdf');
+        }
+
+
+
+
+        function updateChart(response, labels, keysArray, valuesArray) {
+            const ctx = document.getElementById('myChart');
+
+            if (window.myChart instanceof Chart) {
+                window.myChart.destroy();
+            }
+
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+
+                    labels: keysArray,
+                    datasets: [{
+                        label: 'Metrics',
+                        data: valuesArray,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    }]
+                },
+                options: {
+                    animations: {
+                        tension: {
+                            duration: 1000,
+                            easing: 'linear',
+                            from: 1,
+                            to: 0,
+                            loop: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true, 
+                            suggestedMax: Math.max(...valuesArray) + 1000,
+                            ticks: {
+                                stepSize: Math.ceil(Math.max(...valuesArray) / 5)
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        function updateDashboard(response) {
+
+            const cards = document.querySelector('.dashboard-cards');
+
+            const tbody = document.getElementById('orderTable');
+
+            TopProduct(response);
+
+            TopCategory(response);
+
+            cards.innerHTML = `
+                
+                            <div class="card">
+                                <div class="card-title">Overall Sales Count </div>
+                    
+                                <div class="card-value" id="salesCount" >${response.order[0].deliveredCount}
+                                </div>
+                            </div>
+
+
+                            <div class="card">
+                                <div class="card-title">Total Products</div>
+                                <div class="card-value" id="totalProducts">${response.products}
+                                </div>
+                            </div>
+
+
+                            <div class="card">
+                                <div class="card-title">Overall Discount</div>
+                                <div class="card-value" id="overallDiscount">${response.order[0].overallDiscount}
+                                </div>
+                            </div>     
+                        
+                        `
+
+
+            tbody.innerHTML = '';
+
+            response.orders.forEach(order => {
+                order.items.forEach(item => {
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+
+                                    <td>${order.OrderId}</td>
+                                    <td>${new Date(order.orderDate).toDateString()}</td>
+                                    <td>${order.user ? order.user.username : 'Unknown Customer'}</td>
+                                    <td>${item.product.productName}</td>
+                                    <td>₹${parseInt(Number(order.payableAmount))}</td>
+                                    <td><span class="status completed">${item.orderStatus}</span></td>
+                                     <td>${order.paymentMethod}</td>
+                                `;
+                    tbody.appendChild(row);
+                });
+            });
+            console.log(cards);
+
+        }
+
+
+        function TopProduct(response) {
+
+            const topProduct = document.querySelector('.dashboard-topproducts');
+
+
+            topProduct.innerHTML = '';
+            response.topproducts.forEach((item) => {
+
+                console.log("topproduct", item.productTitle);
+
+
+                const div = document.createElement('div');
+
+                div.classList.add('card');
+
+                div.innerHTML = `
+
+            <div class="card-title">Product name</div>
+
+            <div class="card-value" id="salesCount">
+            ${item.productTitle ? item.productTitle : "NO PRODUCT"}
+            </div>
+            <div class="card-title">Product Sell Count</div>
+            <div class="card-value" id="salesCount">
+            ${item.sellCount ? item.sellCount : 0}
+            </div>
+            `
+                topProduct.appendChild(div);
+
+            })
+
+        }
+
+
+        function TopCategory(response) {
+
+            const category = document.querySelector('.dashboard-top-category');
+
+            category.innerHTML = '';
+
+            response.topCategorys.forEach((element) => {
+
+                const div = document.createElement('div');
+
+
+                div.classList.add('card');
+
+                div.innerHTML = `
+
+            <div class="card-title">Category name</div>
+
+            <div class="card-value" id="salesCount">
+               ${element.categoryName ? element.categoryName : "No Category"}
+            </div>
+            <div class="card-title">Ctegory Base sell Count</div>
+            <div class="card-value" id="salesCount">
+                ${element.Sellcount ? element.Sellcount : 0}
+            </div>
+                     
+                 `
+
+                category.appendChild(div);
+            })
+
+
+
+        }
+
+
+    </script>

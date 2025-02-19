@@ -8,35 +8,75 @@ const wishlistSchema = require("../../model/wishlist");
 
 exports.cart = async (req, res) => {
     try {
+
+        console.log("cart post  request received");
+        
         if (!req.session.Userdata) {
             return res.redirect("/login");
         }
 
         const userId = req.session.Userdata._id;
-        const productId = req.body.productId;
+
+        console.log("User ID:", userId);
+        
+        const id = req.body.productId.trim();
+
+        console.log("Product ID:", id);
+        
         const quantity = parseInt(req.body.quantity);
 
-        const product = await Product.findById(productId);
+        console.log("Quantity:", quantity);
+
+        const offerPrice = parseInt(req.body.offerPrice);
+
+        console.log("Offer Price:", offerPrice);
+        
+
+        const product = await Product.findOne({_id:id});
+
+        console.log("Product:", product);
+        
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
 
+        console.log("Productssssssssssssssssss:", product);
+        
+
         let cart = await cartSchema.findOne({ user: userId });
+
+        console.log("Cartsssssssssssssssss:", cart);
+        
         if (!cart) {
             cart = new cartSchema({ user: userId, items: [] });
         }
+
+        console.log(" First step ");
+        
 
         if(product.stock<quantity){
             return res.json({success:false, message: "Quantity out of stock" });
         }
 
+        console.log(" Second step ");
+        
+
         if(quantity==0){
             return res.json({success:false, message: "Product not Awailable" });
         }
 
-        const existingProduct = cart.items.find(item => item.product.toString() === productId);
+        console.log(" Third step ");
+        
+
+        const existingProduct = cart.items.find(item => item.product.toString() === product._id.toString());
+
+        console.log(" Existing Product:", existingProduct);
+        
 
         const totalQuantity = existingProduct ? existingProduct.quantity + quantity : quantity;
+
+        console.log(" Total Quantity:", totalQuantity);
+        
 
         if (totalQuantity > product.stock) {
             return res.json({
@@ -45,25 +85,37 @@ exports.cart = async (req, res) => {
             });
         }
 
+        console.log(" Fourth step ");
+        
+
         if (existingProduct) {
 
             existingProduct.quantity += quantity;
         } else {
-            cart.items.push({ product: productId, quantity: quantity });
+            cart.items.push({ product: product._id, quantity: quantity });
         }
+
+        console.log(" Fifth step ");
+        
 
         await cart.save();
         console.log("Cart saved successfully");
+
+        console.log("Sixth step ");
+        
         res.status(201).json({
             success: true,
             message: "Product added to cart successfully",
-            redirectUrl: '/cart'
+            redirectUrl: '/cart',
+            
         });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+
 
 
 exports.cart_page = async (req, res) => {
@@ -91,7 +143,29 @@ exports.cart_page = async (req, res) => {
     }
 
     cart.items.forEach(item => {
-        totalAmount += item.product.regularPrice * item.quantity;
+
+        const offerPrice=(()=> {
+            const productOffer = typeof item.product.productOffer === "number" &&
+            !isNaN(item.product.productOffer) ? item.product.productOffer : 0;
+            const categoryOffer = typeof item.product.categoryofferprice === "number" &&
+            !isNaN(item.product.categoryofferprice) ? item.product.categoryofferprice : 0;
+
+
+            if (productOffer > 0 && categoryOffer > 0) {
+            return Math.min(productOffer, categoryOffer);
+            } else if (productOffer > 0) {
+            return productOffer;
+            } else if (categoryOffer > 0) {
+            return categoryOffer;
+            } else {
+            return 0;
+            }
+            })();
+
+        totalAmount +=   offerPrice>0 ? offerPrice * item.quantity :  item.product.regularPrice * item.quantity;
+
+        console.log("Jusssstttt manasilavan",totalAmount);
+        
     });
 
     try {

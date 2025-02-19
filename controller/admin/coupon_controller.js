@@ -1,17 +1,20 @@
 const { name } = require('ejs');
 const couponSchema = require('../../model/coupon');
 
-exports.coupon = async (req,res)=>{
-    const admin = req.session.admin;
-    const coupon = await couponSchema.find();
-    console.log("zzzzzzz",coupon);
-    
-    res.render('admin/coupon', {
-        title: 'Coupon Management',
-        layout: 'layouts/admin_layout',
-        admin,
-        coupon
-    });
+
+
+
+exports.coupon = async (req, res) => {
+  const admin = req.session.admin;
+  const coupon = await couponSchema.find();
+  console.log("zzzzzzz", coupon);
+
+  res.render('admin/coupon', {
+    title: 'Coupon Management',
+    layout: 'layouts/admin_layout',
+    admin,
+    coupon
+  });
 }
 
 
@@ -19,13 +22,16 @@ exports.addcoupon = async (req, res) => {
   try {
     console.log("Received Coupon Data:", req.body);
 
-    const { name, discount, date } = req.body;
+    const { name, discount, date , minimmum, maximmum } = req.body;
 
     // Create and save the coupon
     const coupon = new couponSchema({
       coupon_code: name,
       discount: parseFloat(discount),
-      expiryDate: new Date(date) 
+      expiryDate: new Date(date),
+      minimum_purchase_amount : Number(minimmum),
+      maximum_coupon_amount : Number(maximmum)
+
     });
 
     await coupon.save();
@@ -39,62 +45,65 @@ exports.addcoupon = async (req, res) => {
 };
 
 exports.editcoupon = async (req, res) => {
-  try{
+  try {
 
     console.log("edit coupon  ");
-    
-  
-    console.log("eeeeeee",req.body);
 
-    const {editID,couponName, discountName,dateName} = req.body;
+
+    console.log("eeeeeee", req.body);
+
+    const { editID, couponName, discountName, dateName , minimmum, maximmum } = req.body;
 
     const coupon = await couponSchema.findByIdAndUpdate(editID, {
-       coupon_code: couponName,
-       discount: parseFloat(discountName),
-       expiryDate: new Date(dateName)
+      coupon_code: couponName,
+      discount: parseFloat(discountName),
+      expiryDate: new Date(dateName),
+      minimum_purchase_amount : Number(minimmum),
+      maximum_coupon_amount : Number(maximmum)
     })
 
-    if(!coupon){
+    if (!coupon) {
       console.log("coupon not found");
       return res.status(404).send("Coupon not found");
     }
 
     console.log("coupon updated successfully:", coupon);
-    
+
 
     res.redirect('/admin/coupon');
 
-  }catch(error){
+  } catch (error) {
     console.log(error);
-    
+
   }
 }
 
 
-exports.deletecoupon = async (req,res)=>{
+exports.deletecoupon = async (req, res) => {
 
-try{
+  try {
 
-  console.log("deletecoupon called");
+    console.log("deletecoupon called");
 
-  const{couponId} = req.body;
+    const { couponId } = req.body;
 
-  console.log("This is my coupon Id",couponId);
+    console.log("This is my coupon Id", couponId);
 
-  await couponSchema.findByIdAndDelete(couponId);
+    await couponSchema.findByIdAndDelete(couponId);
 
-  console.log("coupon deleted successfully");
-  
+    console.log("coupon deleted successfully");
 
-  res.status(200).json({success:true, message: "Coupon deleted Successfully"});
-  
 
-}catch(error){
-  console.log("Delete coupon  error",error);
-  res.redirect('/pageerror')
-  
+    res.status(200).json({ success: true, message: "Coupon deleted Successfully" });
+
+
+  } catch (error) {
+    console.log("Delete coupon  error", error);
+    res.redirect('/pageerror')
+
+  }
+
+
 }
-  
-  
-}
-  
+
+

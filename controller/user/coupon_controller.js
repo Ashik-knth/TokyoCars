@@ -20,18 +20,12 @@ exports.apply_coupon = async (req, res) => {
         const cart = await cartSchema.findById(cartId).populate("items.product");
 
 
+        console.log("Total Amount:", totalAmount);
+        
+
+
         console.log("qqqqqqqqq",cart);
 
-
-        // const productIds = cart.items.map(item => item.product._id.toString());
-       
-        // const product = await Product.find({ _id: { $in: productIds } });
-
-        // console.log("This is my product", product);
-        
-        
-
-        // console.log("Product IDs:", productIds);
 
         console.log("Body Data:", req.body);
 
@@ -74,23 +68,42 @@ exports.apply_coupon = async (req, res) => {
 }
 
 
-// exports.remove_coupon = async (req,res)=>{
-//     try{
+exports.coupon  = async (req,res) =>{
+    console.log("Coupon router is called ");
 
-//         const {couponId} = req.body ;
+    try{
 
-//         const coupon = await couponSchema.findById(couponId);
+        const user = req.session.Userdata ;
 
-//         if(!coupon){
-//             console.log("coupon not found");
-//             return res.status(404).send("Coupon not found");
-//         }
+        const order = await orderSchema.find({
+            user: user._id,
+            couponId: { $ne: null } 
+          });
 
-//         console.log("coupon removed successfully:", coupon);
-//         res.status(200).json({success:true, message:"Coupon removed successfully" , coupon});;
 
-//     }catch(error){
-//         console.log("Remove coupon error",error);
+          const couponIds = order.map(item => item.couponId.toString());
+
+          console.log("this are the coupon ids ",couponIds);
+          
+
+
+          const coupon = await couponSchema.find({ _id: { $in: couponIds } });
+
+
+          console.log("This are the coupons ssss",coupon);
         
-//     }
-// }
+        res.render("user/coupon",{
+            title: "Tokyo Cars Coupons",
+            layout : "layouts/user_profile_layout",
+            user,
+            coupon,
+            order
+        })
+
+    }catch(error){
+        console.log("Coupon Rendering Erorr",error);
+        
+    }
+    
+}
+

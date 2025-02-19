@@ -307,3 +307,46 @@
     color: #a1a1a1; 
     cursor: not-allowed; 
 }
+
+
+.invoice-btn {
+    background-color: #007bff; 
+    color: white;
+    padding: 11px 4px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    margin-left: 16px;
+    text-decoration: none;
+    
+}
+
+a{
+    text-decoration: none;
+}
+
+#paymentButton {
+    padding: 6px 21px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 10%;
+  }
+  
+  #paymentButton:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  #paymentButton:active {
+    transform: translateY(0);
+  }

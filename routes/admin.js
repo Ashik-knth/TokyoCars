@@ -5,17 +5,19 @@ const customer_controller = require("../controller/admin/customer_controller");
 const category_controller = require("../controller/admin/category_controller");
 const product_controller = require("../controller/admin/product_controller");
 const coupon_controller = require("../controller/admin/coupon_controller");
+const offer_controller = require("../controller/admin/offer_controller");
+const dashboard_controller = require("../controller/admin/dashboard_controller");
 const {upload} = require("../multer/multer");
 const { admin_auth } = require("../middleware/auth");
 
 
 admin_router.get('/login' , admin_controller.adminhomelogin);
 
-admin_router.get('/dashboard', admin_auth, admin_controller.dashboard);
+admin_router.get('/dashboard', admin_auth,  admin_controller.dashboard);
 
 admin_router.post('/login', admin_controller.adminlogin);
 
-admin_router.get('/orders', admin_auth, admin_controller.orders);
+admin_router.get('/orders',  admin_controller.orders);
 
 admin_router.get('/password', admin_auth, admin_controller.password);
 
@@ -55,8 +57,6 @@ admin_router.post('/editproduct/:id', upload.any() , product_controller.editprod
 
 admin_router.post('/addproduct', upload.any() , product_controller.addproducts);
 
-// admin_router.post('/deletesingleimage', product_controller.deletesingleimage);
-
 admin_router.post('/deleteproduct', product_controller.deleteproduct);
 
 admin_router.post('/restoreproduct', product_controller.restoreproduct);
@@ -71,7 +71,7 @@ admin_router.post('/status-change', product_controller.statusChange);
 
 admin_router.post('/return-status-change', product_controller.returnstatusChange)
 
-admin_router.get('/order-details/:id', admin_auth, product_controller.orderdetail)
+admin_router.get('/order-details/:id',  product_controller.orderdetail)
 
 // COUPON
 
@@ -82,6 +82,26 @@ admin_router.post('/addcoupon', coupon_controller.addcoupon);
 admin_router.post('/editcoupon', coupon_controller.editcoupon);
 
 admin_router.delete('/deletecoupon', coupon_controller.deletecoupon);
+
+admin_router.get('/offer', admin_auth, offer_controller.offer);
+
+admin_router.post('/addoffer', offer_controller.addoffer);
+
+admin_router.post('/editoffer', offer_controller.editoffer);
+
+admin_router.delete('/deleteoffer',offer_controller.deleteoffer);
+
+admin_router.post('/apply-product-offer',offer_controller.applyproductoffer);
+
+admin_router.post('/apply-category-offer',offer_controller.applycategoryoffer)
+
+admin_router.post('/cancelOrder', admin_controller.cancel_order);
+
+
+// DASHBOARD
+
+admin_router.post('/filterdatebased',dashboard_controller.datefilter)
+
 
 
 module.exports = admin_router;

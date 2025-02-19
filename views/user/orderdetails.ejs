@@ -1,70 +1,3 @@
-<!-- <div class="order-detail-container">
-    <h1 class="order-heading">Order Status</h1>
-    
-    <div class="order-delivery-address">
-        <h2 class="order-address-title">Delivery Address</h2>
-        <p class="order-address-details">
-            Ashik<br>
-            Kozhikkode<br>
-            Apt 4B<br>
-            Kerala,Kakkanchery<br>
-            Phone: (91+) 7658976543
-        </p>
-    </div>
-
-    <div class="status-slider">
-        <div class="progress-bar">
-            <div class="progress"></div>
-        </div>
-        <div class="status-points">
-            <div class="point active">
-                <span class="point-label">Ordered</span>
-            </div>
-            <div class="point active">
-                <span class="point-label">Processed</span>
-            </div>
-            <div class="point active">
-                <span class="point-label">Shipped</span>
-            </div>
-            <div class="point">
-                <span class="point-label">Delivered</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="order-product-container">
-        <img src="/api/placeholder/100/100" alt="Product" class="order-product-image">
-        <div class="order-product-details">
-            <h3 class="order-product-name">Buggati Chirron</h3>
-            <div class="order-product-price">$199.99</div>
-            <div class="order-product-quantity">Quantity: 1</div>
-        </div>
-    </div>
-
-    <div class="order-info">
-        <h3>Order Information</h3>
-        <div class="info-row">
-            <span>Order Number:</span>
-            <span>#ORD123456</span>
-        </div>
-        <div class="info-row">
-            <span>Order Date:</span>
-            <span>Dec 28, 2024</span>
-        </div>
-        <div class="info-row">
-            <span>Expected Delivery:</span>
-            <span>Dec 31, 2024</span>
-        </div>
-        <div class="info-row">
-            <span>Payment Method:</span>
-            <span>Credit Card (**** 1234)</span>
-        </div>
-    </div>
-
-    <button class="order-cancel-button">Cancel Order</button>
-</div> -->
-
-
 <div class="order-detail-container">
 
     <div class="order-detail-header">
@@ -79,6 +12,13 @@
             <p>
                 <%= order.orderDate.toDateString() %>
             </p>
+
+            <% if (order.items[0].PaymentStatus==='Failed' ) { %>
+
+                <button id="paymentButton"
+                    onclick="Repayment('<%= order._id %>' , '<%= order.payableAmount %>', '<%= order.totalAmount %>', '<%= order.couponId%>')">Repayment</button>
+
+                <% } %>
         </div>
         <div class="order-detail-info-group">
             <h3>Shipping Address</h3>
@@ -96,6 +36,19 @@
             </h3>
             <!-- <p>VISA ending in 4242</p> -->
         </div>
+
+        <div>
+
+            <% if (delivered) { %>
+
+                <a class="invoice-btn" href="/invoice/<%= order._id %>">Invoice</a>
+
+                <% } %>
+
+
+
+
+        </div>
     </div>
 
     <div class="order-detail-items">
@@ -106,46 +59,132 @@
 
             <div class="order-detail-item">
 
-                <img src="/uploads/<%= element.product.productImage[0] %>" alt="Product"
-                    class="order-detail-item-image">
+                <img src="/uploads/<%= element.productImage%>" alt="Product" class="order-detail-item-image">
                 <div class="order-detail-item-details">
 
                     <h3 class="order-detail-item-name">
-                        <%= element.product.productName %>
+                        <%= element.productTitle%>
                     </h3>
-                    <p class="order-detail-item-price">₹<%= element.product.regularPrice %>
+                    <p class="order-detail-item-price">₹<%= element.price %>
                     </p>
                     <p>
-                        <%= element.discount>0 ? "Discount: ₹" + (element.product.regularPrice - element.discount) : ""
+                        <%= element.discount>0 ? "Discount: ₹" + (element.discount) : ""
                             %>
                     </p>
                     <p>Quantity: <%= element.quantity %>
                     </p>
-                    <p>
-                        <%= element.orderStatus==="Cancelled" ? "" : "Payment Status: " + element.PaymentStatus %>
-                    </p>
-                    <% if (element.orderStatus==="Cancelled" || element.orderStatus==="Delivered" ) { %>
-                        <button disabled style="display: none;" type="button"
-                            onclick="cancelOrder('<%= order._id %>', '<%= element.product._id %>')"
-                            class="order-detail-cancel-button">Cancel Order</button>
 
-                        <% }else { %>
-                            <button type="button"
-                                onclick="cancelOrder('<%= order._id %>', '<%= element.product._id %>')"
-                                class="order-detail-cancel-button">Cancel Order</button> &nbsp;
+                    <% if (element.orderStatus!=="Cancelled" ) { %>
+
+                        <p>PaymentStatus:<%= element.PaymentStatus %>
 
 
-                            <% } %>
+                        </p>
+
+                        <% } %>
 
 
-                                <% if (element.orderStatus==="Delivered" ) { %>
-                                    <button class="order-detail-cancel-button" <%=element.isReturnRequested ? 'disabled'
-                                        : '' %>
-                                        onclick="returnOrder('<%= order._id %>', '<%= element.product._id %>')"
-                                                type="button">
-                                                Return
-                                    </button>
+
+                            <% if (element.orderStatus==="Cancelled" || element.orderStatus==="Delivered" ||
+                                element.PaymentStatus==="Failed" ) { %>
+
+                                <button disabled style="display: none;" type="button"
+                                    class="order-detail-cancel-button">Cancel
+                                    Order</button>
+
+                                <% }else { %>
+
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal" data-bs-whatever="@mdo">Cancel
+                                        Order</button>
+
+
+                                    <div class="modal fade" id="exampleModal" tabindex="-1"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Reason
+                                                    </h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form>
+                                                        <div class="mb-3">
+                                                            <label for="message-text" class="col-form-label">Cancel
+                                                                Reason</label>
+                                                            <div id="error-message" style="color: red;"></div>
+                                                            <textarea class="form-control" id="message-text"
+                                                                placeholder="please text your reason"></textarea>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        onclick="cancelOrder('<%= order._id %>', '<%= element.product._id %>')">Cancel
+                                                        order</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                     <% } %>
+
+
+                                        <% if (element.orderStatus==="Delivered" ) { %>
+
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                <%=element.isReturnRequested ? 'disabled' : '' %>
+
+                                                data-bs-target="#exampleModal" data-bs-whatever="@mdo">Return
+                                                Product</button>
+
+
+
+                                            <div class="modal fade" id="exampleModal" tabindex="-1"
+                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                                                Reason
+                                                            </h1>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form>
+                                                                <div class="mb-3">
+                                                                    <label for="message-text"
+                                                                        class="col-form-label">Cancel
+                                                                        Reason</label>
+                                                                    <div id="error-message" style="color: red;">
+                                                                    </div>
+                                                                    <textarea class="form-control" id="message-text"
+                                                                        placeholder="please text your reason"></textarea>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close</button>
+                                                            <button type="button" class="btn btn-danger"
+                                                                onclick="returnOrder('<%= order._id %>', '<%= element.product._id %>')">Retrun</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <% } %>
+
+
+
 
                 </div>
 
@@ -158,10 +197,14 @@
 
                 </span>
 
+
+
             </div>
 
             <% }) %>
     </div>
+
+
 
     <div class="order-detail-summary">
         <div class="order-detail-summary-row">
@@ -169,7 +212,7 @@
             <span>₹<%= order.totalAmount%></span>
         </div>
         <div class="order-detail-summary-row">
-            <span>Shipping</span>
+            <span>Delivery Charge</span>
             <span>₹40</span>
         </div>
         <div class="order-detail-summary-row">
@@ -183,65 +226,147 @@
     </div>
 
 
-
 </div>
+
+
+
+<!-- CANCEL ORDER MODAL -->
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
 <script>
 
 
     function cancelOrder(OrderId, ProductId) {
-        console.log("hai hello product cancellation", ProductId);
 
-        console.log("hai hello order cancellation", OrderId);
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/cancelOrder', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        const data = JSON.stringify({ orderId: OrderId, productId: ProductId });
-        xhr.send(data);
+        let message = document.getElementById('message-text').value.trim();
 
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4 && xhr.status === 200) {
+        let messageRegex = /^[^ ,]+$/;
 
-                const response = JSON.parse(xhr.responseText);
+        let errorMessageContainer = document.getElementById('error-message');
 
-                if (response.success) {
+        console.log(message);
 
 
+        console.log("This is the text ", message);
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Order cancelled successfully',
-                        showConfirmButton: false,
-                        timer: 1000
-                    }).then(() => {
+        if (!message || message.length == 0 ) {
+            let element = document.createElement('div');
 
-                        window.location.reload();
+            errorMessageContainer.textContent = 'Please enter valid Reason';
+            errorMessageContainer.style.fontSize = '12px';
 
-                    })
-                }
+            return;
 
-            } else {
-                console.log("Something went wrong");
+        } else if (messageRegex.test(message)) {
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Something went wrong',
-                    text: 'Please try again',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
+            let element = document.createElement('div');
+
+            errorMessageContainer.textContent = 'Please enter valid Reason';
+            errorMessageContainer.style.fontSize = '12px';
+
+            return ;
+          
+        }else{
+            errorMessageContainer.textContent = '';
         }
 
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to cancel this order?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: 'No, keep it',
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Proceed with the cancellation
+                console.log("hai hello product cancellation", ProductId);
+                console.log("hai hello order cancellation", OrderId);
 
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/cancelOrder', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                const data = JSON.stringify({ orderId: OrderId, productId: ProductId, message: message });
+                xhr.send(data);
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Order cancelled successfully',
+                                showConfirmButton: false,
+                                timer: 1000,
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    } else if (xhr.readyState === 4) {
+                        console.log("Something went wrong");
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Something went wrong',
+                            text: 'Please try again',
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }
+                };
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                // User canceled the action
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Cancelled',
+                    text: 'Your order was not cancelled.',
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            }
+        });
     }
+
 
 
     function returnOrder(orderId, productId) {
 
         console.log("this is my order id ", orderId);
         console.log("this is my product id ", productId);
+
+        let message = document.getElementById('message-text').value.trim()
+        let messageRegex = /^[^ ,]+$/;
+        let errorMessageContainer = document.getElementById('error-message');
+
+        console.log(message);
+
+
+        console.log("This is the text ", message);
+
+        if (!message || message.length == 0) {
+            let element = document.createElement('div');
+
+            errorMessageContainer.textContent = 'Please enter valid Reason';
+            errorMessageContainer.style.fontSize = '12px';
+
+            return;
+
+        } else if (messageRegex.test(message)) {
+
+            let element = document.createElement('div');
+
+            errorMessageContainer.textContent = 'Please enter valid Reason';
+            errorMessageContainer.style.fontSize = '12px';
+            return;
+
+        } else {
+            errorMessageContainer.textContent = '';
+        }
 
 
         Swal.fire({
@@ -265,6 +390,7 @@
                     body: JSON.stringify({
                         orderId,
                         productId,
+                        message
                     }),
 
                 }).then((response) => {
@@ -307,6 +433,140 @@
 
 
 
+
+    }
+
+
+    async function Repayment(orderId, PayableAmount, SubtotalAmount, couponId) {
+
+        try {
+
+            const response = await fetch('/create_razorpay_oder', {
+
+                method: 'POST',
+
+                headers: { 'Content-Type': 'application/json' },
+
+                body: JSON.stringify({ cartId: orderId, PayableAmount: PayableAmount, SubtotalAmount: SubtotalAmount, couponId: couponId })
+            })
+
+            const result = await response.json();
+
+            console.log("This is the ", response);
+            console.log("This is the result", result);
+
+
+
+            if (result.success) {
+                const options = {
+                    key: 'rzp_test_ZPlMwH8hdwliYC',
+                    amount: result.payableAmount * 100,
+                    currency: 'INR',
+                    name: 'Tokyo Cars',
+                    description: 'Test Payment',
+                    order_id: result.razorpayOrderId,
+                    handler: async function (paymentResponse) {
+
+                        try {
+
+                            const response = await fetch('/re_payment', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    orderId: orderId
+                                })
+                            })
+
+                            const result = await response.json();
+
+                            console.log("This is the resultttttttttt ", result);
+
+
+                            if (result.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Your Payment is successfully',
+                                    text: 'Thank you for purchasing product',
+                                    showConfirmButton: false,
+                                }).then(() => {
+                                    window.location.reload();
+                                })
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Payment Failed',
+                                    text: result.message || 'Payment verification failed. Please try again.',
+                                    showConfirmButton: true,
+                                    timer: 1500
+                                });
+                            }
+
+                        } catch (error) {
+
+                            console.error('Error verifying payment:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An unexpected error occurred while verifying the payment.',
+                                showConfirmButton: true,
+                                timer: 1500
+                            });
+
+                        }
+
+                    },
+
+                    prefill: {
+                        name: 'Tokyo Cars',
+                        email: 'tokyo@gmail.com',
+                        contact: '91212234567',
+                    },
+
+                    notes: {
+                        address: 'Tokyo, Japan'
+                    },
+
+                    theme: {
+                        color: '#007bff',
+                    },
+
+                    modal: {
+                        ondismiss: function () {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Payment Failed',
+                                showCancelButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                window.location.reload();
+                            })
+
+                        }
+                    }
+
+                };
+
+                console.log("Final Razorpay options:", options);
+
+                const razorpay = new Razorpay(options);
+                razorpay.open();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Order Creation Failed',
+                    text: 'Failed to create the Razorpay order. Please try again.',
+                    showConfirmButton: true,
+                    timer: 1500
+                });
+            }
+
+        } catch (error) {
+
+        }
 
     }
 

@@ -22,6 +22,15 @@
 
             <!-- Product Details -->
             <div class="single-pro-details">
+
+                <% if ( percentage > 0) { %>
+
+                <div class="discount-box-single">
+                    <span> <%= percentage %>% OFF</span>
+                </div>
+                 
+                <% } %>
+                
                 <h4>
                     <%= products.productName %>
                 </h4>
@@ -29,13 +38,27 @@
                 <p> <%= products.stock > 0 ? 'In Stock' : 'Out of Stock' %> </p>
 
                 
-                <h2>
-                    <%= products.regularPrice %>
-                </h2>
+                 <% if (offerPrice>0) { %>
+
+                    <h2 style="text-decoration: line-through; color: #000;" >
+                        ₹<%= products.regularPrice %>
+                    </h2>
+
+                    <h2>₹<%= offerPrice %></h2>
+                  
+                 <% }else { %>
+                
+
+                    <h2>₹<%= products.regularPrice %></h2>
+
+                 <% } %>
+
+               
+
                 <input type="number" value='<%= products.stock>0 ? 1 : products.stock %>'' min="1" max="<%= products.stock %> " id="quantity"
                     onchange="quantityChange()">
          
-                <button class="normal" onclick="addToCart('<%= products._id %>')">Add To Cart</button>
+                <button class="normal" onclick="addToCart('<%= products._id %> ' , '<%= offerPrice %>' , '' )">Add To Cart</button>
                 &nbsp;
                 <button class="normal" onclick="addToWishlist('<%= products._id %>')" > Add To Wishlist</button>
                 <p> Stock : <%= products.stock %></p>
@@ -149,15 +172,25 @@
                 }
 
 
-                function addToCart(productId) {
+                function addToCart(productId, offerPrice) {
                     const quantityValue = document.getElementById("quantity").value;
+
+                    console.log("quantityValue", quantityValue);
+
+                    console.log("productId", productId);
+
+                    console.log("offerPrice", offerPrice);
+                    
+                    
+                    
 
                     $.ajax({
                         url: '/add-to-cart',
                         type: 'POST',
                         data: {
                             productId: productId,
-                            quantity: quantityValue
+                            quantity: quantityValue,
+                            offerPrice: offerPrice
                         },
                         success: function (response) {
                             if (response.success) {

@@ -28,31 +28,17 @@ const couponSchema = new mongoose.Schema({
         required: true,
     },
 
-   users: [{
-    
-    userId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-    },
-
-    isBought:{
-        type: Boolean,
-        default: false
-    }
-
-   }],
 
    minimum_purchase_amount : {
     type: Number,
-    default:1000
+    default:0
 
    },
 
 
    maximum_coupon_amount :{
     type: Number,
-    default:2000
+    default:0
    },
 
 },

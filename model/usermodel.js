@@ -1,4 +1,5 @@
 
+const { required } = require("joi");
 const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
     username:{
@@ -29,6 +30,7 @@ const userSchema = new mongoose.Schema({
 
     image: {
         type: String,
+        required : false,
     },
 
     isAdmin: {
@@ -39,6 +41,12 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     }, 
+
+    refferalCode: {
+        type: String,
+        required: false,
+        default: null
+    },
 },
 
 

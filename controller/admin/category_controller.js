@@ -36,7 +36,7 @@ exports.addcategory = async (req, res) => {
         if (existingCategory) {
             return res.json({ success: false, message: "Category already exists" });
         }
-        const newCategory = new categorySchema({ name });
+        const newCategory = new categorySchema({ name,  categoryoffer:null, categoryofferprice:null });
         console.log(newCategory);
 
         await newCategory.save();

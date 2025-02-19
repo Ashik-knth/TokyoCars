@@ -1,0 +1,20 @@
+<div class="coupon-header">
+    <h1>Your Used Coupons</h1>
+    <p>History of your previously redeemed offers</p>
+</div>
+
+<div class="coupon-container">
+    <% coupon.forEach(element => { %>
+     
+   
+    <div class="coupon-card">
+        <div class="coupon-store"><%= element.coupon_code %></div>
+        <div class="coupon-discount"><%= element.discount%> % OFF</div>
+        <div class="coupon-code">SAVE <%= element.discount %></div>
+        <div class="coupon-expiry">Expired: <%= element.expiryDate.toDateString() %></div>
+        <div class="used-date">Used on: <%= element.createdAt.toDateString() %></div>
+    </div>
+
+    <% }) %>
+
+</div>

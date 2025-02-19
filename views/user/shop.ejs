@@ -6,14 +6,13 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="sidebar">
                 <!-- Search Section -->
                 <div class="search-section">
                     <h3 class="section-title">Search Products</h3>
                     <div class="search-container">
-                        <input type="text" class="search-input" placeholder="Search items..." />
-                        <button class="search-button" onclick="filterByCategory()">Search</button>
+                        <input type="text" class="search-input" placeholder="Search items..." oninput="filterByCategory('',1,currentCategory)" />
                     </div>
                 </div>
 
@@ -24,35 +23,35 @@
                             <div class="section">
                                 <h3 class="section-title">Sort By</h3>
                                 <ul class="option-list">
-                                    <li onclick="filterByCategory('lowest-high',1,this)" class="option-item">Price: Low
-                                        to
-                                        High</li>
-                                    <li onclick="filterByCategory('high-low',1,this)" class="option-item">Price: High to
-                                        Low
-                                    </li>
-                                    <li onclick="filterByCategory('newArrivals',1,this)" class="option-item">New
-                                        Arrivals
-                                    </li>
-                                    <li onclick="filterByCategory('A-to-Z',1,this)" class="option-item">A-Z</li>
-                                    <li onclick="filterByCategory('Z-to-A',1,this)" class="option-item">Z-A</li>
+                                    <li onclick="filterByCategory('lowest-high', 1, currentCategory,this)"
+                                        class="option-item">Price: Low to High</li>
+                                    <li onclick="filterByCategory('high-low', 1, currentCategory,this)"
+                                        class="option-item">Price: High to Low</li>
+                                    <li onclick="filterByCategory('newArrivals', 1, currentCategory,this)"
+                                        class="option-item">New Arrivals</li>
+                                    <li onclick="filterByCategory('A-to-Z', 1, currentCategory,this)"
+                                        class="option-item">A-Z</li>
+                                    <li onclick="filterByCategory('Z-to-A', 1, currentCategory,this)"
+                                        class="option-item">Z-A</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="divider"></div>
-
-                <!-- Filter by Category -->
+                <!-- Filter by Category Section -->
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="section">
                                 <h3 class="section-title">Filter By Category</h3>
                                 <ul class="option-list">
-                                    <li onclick="filterByCategory('sports',1,this)" class="option-item">Sports</li>
-                                    <li onclick="filterByCategory('normal',1,this)" class="option-item">Normal</li>
-                                    <li onclick="filterByCategory('luxury',1,this)" class="option-item">Luxury</li>
+                                    <li onclick="setCurrentCategory('sports'); filterByCategory('', 1, 'sports',this)"
+                                        class="option-item">Sports</li>
+                                    <li onclick="setCurrentCategory('normal'); filterByCategory('', 1, 'normal',this)"
+                                        class="option-item">Normal</li>
+                                    <li onclick="setCurrentCategory('luxury'); filterByCategory('', 1, 'luxury',this)"
+                                        class="option-item">Luxury</li>
                                 </ul>
                             </div>
                         </div>
@@ -65,7 +64,7 @@
         </div>
 
         <!-- Products Section -->
-        <div class="col-md-10">
+        <div class="col-md-9">
             <section id="product1" class="section-p1">
                 <!-- Product Container -->
                 <div class="pro-container">
@@ -89,10 +88,57 @@
                                             <i class='bx bxs-star'></i>
                                             <i class='bx bxs-star'></i>
                                         </div>
-                                        <h4>₹<%= product.regularPrice %>
-                                        </h4>
+
+                                        <% const offerPrice=(()=> {
+                                            const productOffer = typeof product.productOffer === "number" &&
+                                            !isNaN(product.productOffer) ? product.productOffer : 0;
+                                            const categoryOffer = typeof product.categoryofferprice === "number" &&
+                                            !isNaN(product.categoryofferprice) ? product.categoryofferprice : 0;
+
+
+                                            if (productOffer > 0 && categoryOffer > 0) {
+                                            return Math.min(productOffer, categoryOffer);
+                                            } else if (productOffer > 0) {
+                                            return productOffer;
+                                            } else if (categoryOffer > 0) {
+                                            return categoryOffer;
+                                            } else {
+                                            return 0;
+                                            }
+                                            })();
+
+                                            if (offerPrice > 0) {
+                                            %>
+
+                                            <h4 style="text-decoration: line-through;">₹<%= product.regularPrice %>
+                                            </h4>
+
+                                            <h4 id="offer-price">Offer Price: ₹<%= offerPrice %>
+                                            </h4>
+                                            <% } else { %>
+
+                                                <h4>₹<%= product.regularPrice %>
+                                                </h4>
+                                                <% } %>
                                     </div>
-                                    <a href="/cart"><i class='bx bx-cart cart'></i></a>
+                                    <% const maxDiscount=Math.max( Number(product.productoffer?.discount) || 0,
+                                        Number(product.category?.categoryoffer?.discount) || 0 ); if (maxDiscount> 0) {
+                                        %>
+                                        <div class="discount-box">
+                                            <%= maxDiscount %> % OFF
+                                        </div>
+                                        <% } %>
+
+                                            <div>
+
+                                                <a><i class='bx bx-cart cart'
+                                                        onclick="addToCart('<%= product._id %> ' , '<%= offerPrice %>' , 1 )"></i></a>
+
+                                                <i class='bx bx-heart wishlist'
+                                                    onclick="addToWishlist('<%= product._id %>')"></i>
+
+                                            </div>
+
 
                                 </div>
                             </a>
@@ -149,16 +195,59 @@
 
     let currentSearchQuery = "";
 
+    let currentCategory = '';
 
-    function filterByCategory(filter = "", page = 1, element) {
-   
+    function setCurrentCategory(category) {
+        currentCategory = category;
+
+        console.log("ddddddd", currentCategory);
+
+    }
+
+
+    function filterByCategory(filter, page = 1, category, element) {
+
+
+        const optionlist = document.querySelectorAll(".option-list li");
+
+        optionlist.forEach((item) => item.classList.remove("selected"));
+
+        if (element) {
+            element.classList.add("selected");
+        }
+
+        console.log("this is the option list", optionlist)
+        console.log("This is the filter", filter);
+
+        console.log("This is the page", page);
+
+        console.log("This is the category", category);
+
+        console.log("aaqqqqqqqqqqqq", currentCategory);
+
+
         const searchInputElement = document.querySelector(".search-input");
         if (searchInputElement) {
             currentSearchQuery = searchInputElement.value;
         }
+
+        const urlParams = new URLSearchParams();
+
+        if (filter) urlParams.append("filter", filter);
+        if (page) urlParams.append("page", page);
+        if (category) urlParams.append("category", category);
+        if (currentSearchQuery !== "") {
+            urlParams.append("search", currentSearchQuery);
+        }
+
+        const querString = urlParams.toString();
+
         const xhr = new XMLHttpRequest();
-        const url = currentSearchQuery ? `/shop/?filter=${filter}&page=${page}&search=${currentSearchQuery}`
-            : `/shop/?filter=${filter}&page=${page}`;
+
+        const url = `/shop/?${querString}`;
+
+        console.log("This is the url", url);
+
 
         xhr.open("GET", url, true);
         xhr.setRequestHeader("Accept", "application/json");
@@ -172,25 +261,64 @@
                 const productContainer = document.querySelector(".pro-container");
                 productContainer.innerHTML = response.products
                     .map((product) => `
-                    <a href="/singleproduct/${product._id}" style="text-decoration: none;">
-                        <div class="pro">
-                            <img class="shirt" src="/uploads/${product.productImage[0]}" alt="${product.productName}">
-                            <div class="des">
-                                <span>${product.category.name}</span>
-                                <h5>${product.productName}</h5>
-                                <div class="star">
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                </div>
-                                <h4>₹${product.regularPrice}</h4>
-                            </div>
-                            <a href="/cart"><i class='bx bx-cart cart'></i></a>
-                        </div>
-                    </a>
-                `)
+    <a href="/singleproduct/${product._id}" style="text-decoration: none;">
+        <div class="pro">
+            <img class="shirt" src="/uploads/${product.productImage[0]}" alt="${product.productName}">
+            <div class="des">
+                <span>${product.category.name}</span>
+                <h5>${product.productName}</h5>
+                <div class="star">
+                    <i class='bx bxs-star'></i>
+                    <i class='bx bxs-star'></i>
+                    <i class='bx bxs-star'></i>
+                    <i class='bx bxs-star'></i>
+                    <i class='bx bxs-star'></i>
+                </div>
+                
+                
+                <h4 class="price" ${Math.max(
+                        typeof product.productOffer === "number" && !isNaN(product.productOffer) ? product.productOffer : 0,
+                        typeof product.categoryofferprice === "number" && !isNaN(product.categoryofferprice) ? product.categoryofferprice : 0
+                    ) > 0
+                            ? 'style="text-decoration: line-through;"'
+                            : ''
+                        }>₹${product.regularPrice}</h4>
+                        
+                                    ${(() => {
+
+                            const productOffer = typeof product.productOffer === "number" && !isNaN(product.productOffer) ? product.productOffer : 0;
+                            const categoryOffer = typeof product.categoryofferprice === "number" && !isNaN(product.categoryofferprice) ? product.categoryofferprice : 0;
+
+
+                            const offerPrice =
+                                productOffer > 0 && categoryOffer > 0 ? Math.min(productOffer, categoryOffer) : // Both are valid, return the smaller one
+                                    productOffer > 0 ? productOffer :
+                                        categoryOffer > 0 ? categoryOffer :
+                                            0;
+
+
+                            return offerPrice > 0 ? `<h4>Offer Price: ₹${offerPrice}</h4>` : "";
+                        })()}
+
+               ${
+                        // Calculate the maximum discount
+                        Math.max(
+                            Number(product.productoffer?.discount || 0),
+                            Number(product.category?.categoryoffer?.discount || 0)
+                        ) > 0
+                            ? `<div class="discount-box">${Math.max(
+                                Number(product.productoffer?.discount || 0),
+                                Number(product.category?.categoryoffer?.discount || 0)
+                            )} % OFF</div>`
+                            : ""
+                        }
+
+            </div>
+            <a><i class='bx bx-cart cart' onclick="addToCart('${product._id}',0,1 )"></i></a>
+             <i class='bx bx-heart wishlist' onclick="addToWishlist('${product._id}')"></i>
+        </div>
+    </a>
+`).join('');
 
                 // Update Pagination
                 updatePagination(response.currentPage, response.totalPages, filter);
@@ -212,7 +340,7 @@
             if (currentPage > 1) {
 
                 const onclickHandler = `filterByCategory('${filter}', ${currentPage - 1})`
-                
+
 
                 html += `<a onclick="${onclickHandler}" style="cursor: pointer;">Previous</a>`;
 
@@ -221,7 +349,7 @@
             for (let i = 1; i <= totalPages; i++) {
 
                 const onclickHandler = `filterByCategory('${filter}', ${i})`
-                
+
 
                 html += `
                 <a onclick="${onclickHandler}" style="cursor: pointer;">${i}</a>
@@ -229,15 +357,117 @@
             }
 
             if (currentPage < totalPages) {
-                
+
                 const onclickHandler = `filterByCategory('${filter}', ${currentPage + 1})`
-                
+
 
                 html += `<a onclick="${onclickHandler}" style="cursor: pointer;">Next »</a>`;
             }
         }
 
         pagination.innerHTML = html;
+    }
+
+
+
+    function addToWishlist(productId) {
+
+
+        console.log("addToWishlist function called with productId:", productId);
+
+
+
+
+        $.ajax({
+            url: '/add-to-wishlist',
+            type: 'POST',
+            data: {
+                productId: productId,
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.replace('/wishlist');
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || "Something went wrong",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+
+
+
+    function addToCart(productId, offerPrice, quantity) {
+
+
+        console.log("quantityValue", quantity);
+
+        console.log("productId", productId);
+
+        console.log("offerPrice", offerPrice);
+
+
+        $.ajax({
+            url: '/add-to-cart',
+            type: 'POST',
+            data: {
+                productId: productId,
+                quantity: quantity,
+                offerPrice: offerPrice
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.replace('/cart');
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || "Something went wrong",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
     }
 
 

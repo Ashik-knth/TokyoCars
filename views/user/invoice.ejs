@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Invoice</title>
+    <link rel="stylesheet" href="/user/home/invoice.css">
+    <!-- Include html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="invoice-container" id="invoice">
+        <header class="invoice-header">
+            <div class="company-info">
+                <h1>Tokyo Cars.</h1>
+                <p>Kannur Rd, Thalassery</p>
+                <p>Kerala, State Kannur</p>
+                <p>Email: tokyo@gmail.com.com | Phone: 91+ 91-45697890</p>
+            </div>
+            <div class="invoice-details">
+                <h2>Invoice</h2>
+                <p><strong>Invoice No:</strong> <%= order[0].Invoice %> </p>
+                <p><strong>Date:</strong> <%= order[0].orderDate.toDateString() %></p>
+            </div>
+        </header>
+
+
+
+        <section class="customer-info">
+            <div class="billing-to">
+                <h3>Billed To:</h3>
+                <p><%=  order[0].user.username %></p>
+                <p><%= order[0].address.addressName %></p>
+                <p><%= order[0].address.streetAddress %></p>
+                <p><%= order[0].user.email %></p>
+            </div>
+        </section>
+
+        <section class="invoice-items">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%  deliveredProducts.forEach(element => { %>
+                     
+                   
+                    <tr>
+                        <td><%= element.productTitle %></td>
+                        <td><%= element.quantity %></td>
+                        <td><%= element.price - element.discount%></td>
+                        <td><%= element.price * element.quantity %></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="invoice-total">
+            <div class="totals">
+                <p><strong>Subtotal:</strong> <%=SubtotalAmount%></p>
+                <p><strong>Delivery Charge:</strong> 40</p>
+                <p><strong>Total:</strong><%= SubtotalAmount + 40 %></p>
+            </div>
+        </section>
+
+        <footer class="invoice-footer">
+            <p>&copy; 2023 Premium Co. All rights reserved.</p>
+        </footer>
+
+
+        <div class="download-btn">
+            <button id="downloadBtn">Download Invoice</button>
+        </div>
+    
+    </div>
+
+  
+    <script>
+       
+       document.getElementById('downloadBtn').addEventListener('click', function () {
+            const invoice = document.getElementById('invoice');
+            const downloadBtn = document.querySelector('.download-btn');
+
+            downloadBtn.style.display = 'none';
+
+            const opt = {
+                margin:       10,
+                filename:     'invoice.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(invoice).save().then(() => {
+                downloadBtn.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>

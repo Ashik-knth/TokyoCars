@@ -43,7 +43,25 @@
                     <h3 class="order-detail-item-name">
                         <%= element.product.productName %>
                     </h3>
-                    <p class="order-detail-item-price"> Product Price : ₹<%= element.product.regularPrice %></p>
+                   
+
+                    <% if ( productoffer[element.product._id] > 0 ) { %>
+
+                        <p class="order-detail-item-price">Product Offer Price : ₹<%= productoffer[element.product._id]%></p>
+                     
+                    <% }else{ %>
+                     
+                        <p class="order-detail-item-price"> Product Regular Price : ₹<%= element.product.regularPrice %></p>
+
+                    <% } %>
+
+
+                    <% if (element.discount!==0) { %>
+
+                        <p>Discount : <%= element.discount %></p>
+                     
+                    <% } %>
+
                     <p>Quantity: <%= element.quantity %></p>
 
                     <p class="order-detail-item-price" >Payment Method : <%= order.paymentMethod %></p>
@@ -63,7 +81,7 @@
 
                     <span class="order-detail-status">
                         <%= element.PaymentStatus %>
-                    </span>
+                    </span>   
 
                     <br>
 
@@ -93,7 +111,7 @@
                         <% } else{ %>
 
 
-                            <select class="order-status-select"
+                            <select class="order-status-select"  
                                 onchange="handleOrderStatusChange(this.value, '<%= order._id %>', '<%= element.product._id %>')">
                                 <option value="<%= element.orderStatus %>" <%=element.orderStatus==='processing'
                                     ? 'selected' : '' %>>
@@ -111,7 +129,9 @@
 
 
                 </div>
-                <span class="order-detail-status">
+
+                <span class="order-detail-status" 
+">
                
                     <%= element.isReturnRequested ? (element.isAdminAcceptedReturn==='Accepted'
                         ? 'Return Request Accepted' : (element.isAdminAcceptedReturn==='Rejected'
@@ -132,7 +152,7 @@
                 <p>Quantity: 2</p>
             </div>
         </div> -->
-    </div>
+    </div>     
 
     <div class="order-detail-summary">
         <div class="order-detail-summary-row">
@@ -151,6 +171,11 @@
             <span>Total</span>
             <span>₹<%= order.payableAmount %></span>
         </div>
+
+        <!-- <div class="order-detail-summary-row">
+            <span>Coupon</span>
+            <span>₹</span>
+        </div> -->
     </div>
 
 
@@ -163,6 +188,8 @@
     function handleOptionChange(value, orderId, productId) {
         console.log("Value changed to:", value);
         console.log("Order ID:", orderId);
+        console.log("This is the product id",productId);
+        
 
         fetch('/admin/payment-change', {
             method: 'POST',

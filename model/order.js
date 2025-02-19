@@ -1,3 +1,4 @@
+const { required } = require('joi');
 const moongoose = require('mongoose');
 
 const orderSchema = new moongoose.Schema({
@@ -12,6 +13,13 @@ const orderSchema = new moongoose.Schema({
         type: moongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+
+
+    couponId : {
+        type : moongoose.Schema.Types.ObjectId,
+        ref : 'Coupon',
+        required : false
     },
 
  
@@ -32,6 +40,21 @@ const orderSchema = new moongoose.Schema({
             ref: 'Product',
             required: true
         },
+
+        CancelorderReason:{
+            type: String,
+            required: false
+        },
+
+        productTitle :{
+            type : String,
+            required : false
+        },
+
+        productImage :{
+            type : String,
+            required : false
+        },
         
         quantity:{
             type: Number,
@@ -48,6 +71,11 @@ const orderSchema = new moongoose.Schema({
             default: 0
         },
 
+        offerprice : {
+            type : Number,
+            default : 0
+        },
+
         orderStatus:{
             type: String,
             default: 'Processing',
@@ -59,8 +87,6 @@ const orderSchema = new moongoose.Schema({
             default: false
         },
 
-        
-
         isAdminAcceptedReturn:{
             type: String,
             default: 'Pending',
@@ -69,6 +95,7 @@ const orderSchema = new moongoose.Schema({
 
         reasonofReturn:{
             type: String,
+            required : false
         },
 
         PaymentStatus:{
@@ -82,14 +109,13 @@ const orderSchema = new moongoose.Schema({
     paymentMethod:{
         type: String,
         required: true,
-        enum: ['Cash on Delivery', 'Online']
+        enum: ['Cash on Delivery', 'Razorpay', 'Wallet']
     },
 
-    // PaymentStatus:{
-    //     type: String,
-    //     default: 'Pending',
-    //     enum: ['Pending', 'Paid', 'Failed', 'Refunded']
-    // },
+    Invoice:{
+        type : String,
+        required : false
+    },
 
     totalAmount:{
         type: Number,

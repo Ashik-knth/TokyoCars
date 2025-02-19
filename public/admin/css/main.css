@@ -70,9 +70,7 @@ body {
     background: rgba(255,255,255,0.1);
 }
 
-.menu-item.active {
-    background: var(--primary-color);
-}
+
 
 /* Main Content */
 .main-content {
@@ -101,7 +99,6 @@ body {
 }
 
 .card-value {
-    font-size: 1.5rem;
     font-weight: bold;
     color: #2c3e50;
 }
@@ -147,12 +144,162 @@ body {
     color: #155724;
 }
 
+.status.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
 .content{
     margin-left: 80px;
     margin-top: 40px;
-    display: flex;
+    align-items: center;
+    align-content: center;
     justify-content: center;
+    
 }
+
+
+.download-btn {
+    background-color: #4CAF50; 
+    border: none; 
+    color: white; 
+    padding: 12px 24px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 16px; 
+    font-weight: bold; 
+    border-radius: 8px; 
+    cursor: pointer;
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    margin-bottom: 12px;
+}
+
+
+.download-btn:hover {
+    background-color: #45a049; 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); 
+}
+
+
+.download-btn:active {
+    background-color: #3e8e41; 
+    transform: translateY(0); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.custom-select {
+    appearance: none; 
+    -webkit-appearance: none; 
+    -moz-appearance: none; 
+    background-color: #fff; 
+    border: 2px solid #ccc; 
+    border-radius: 8px; 
+    padding: 10px 40px 10px 15px; 
+    font-size: 16px; 
+    font-weight: bold; 
+    color: #333; 
+    cursor: pointer; 
+    outline: none;
+    transition: all 0.3s ease; 
+    width: 100%; 
+    max-width: 300px; 
+    margin-bottom: 12px;
+}
+
+
+.custom-select:hover {
+    border-color: #aaa; 
+}
+
+
+.custom-select:focus {
+    border-color: #4CAF50; 
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); 
+}
+
+
+.custom-select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e"); 
+    background-repeat: no-repeat;
+    background-position: right 15px center; 
+    background-size: 12px; 
+}
+
+
+.custom-select option {
+    padding: 10px; 
+    background-color: #fff; 
+    color: #333; 
+    font-size: 14px; 
+}
+
+
+#calendarInput {
+    display: none;
+    margin-top: 15px;
+    padding: 12px 15px;
+    font-size: 16px;
+    color: #333;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    background-color: #fff;
+    width: 200px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#calendarInput:focus {
+    border-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    outline: none;
+}
+
+/* Placeholder styling */
+#calendarInput::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+
+.dashboard-topproducts{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-top-category{
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+}
+
+
 
   
 
