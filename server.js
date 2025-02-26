@@ -78,9 +78,15 @@ app.use((req, res, next) => {
 });
   
 
+
 app.use("/", user_router);
+
 app.use("/admin", admin_router);
 
+app.use('/*', (req, res) => {
+    res.render('page404', { layout: false, title: 'Page Not Found' });
+    
+});
 
 
 app.listen(PORT, () => {

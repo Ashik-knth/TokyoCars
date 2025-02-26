@@ -75,6 +75,8 @@ exports.coupon  = async (req,res) =>{
 
         const user = req.session.Userdata ;
 
+        const userprofile = await userSchema.findById(user._id);
+
         const order = await orderSchema.find({
             user: user._id,
             couponId: { $ne: null } 
@@ -97,7 +99,8 @@ exports.coupon  = async (req,res) =>{
             layout : "layouts/user_profile_layout",
             user,
             coupon,
-            order
+            order,
+            userprofile
         })
 
     }catch(error){

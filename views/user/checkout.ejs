@@ -104,7 +104,8 @@
                             <% address.forEach((element, index)=> { %>
                                 <div class="checkout-address-card">
                                     <input type="radio" name="selectedAddress" id="address-<%= index %>"
-                                        value="<%= element.id %>" <% if (index===0) { %> checked <% } %>
+                                        value="<%= element.id %>" <% if (index===0) { %>
+                                    checked <% } %>
 
                                         />
                                         <label for="address-<%= index %>">
@@ -142,8 +143,14 @@
                 <% if (cart[0] && cart[0].items.length> 0) { %>
                     <% cart[0].items.forEach((item,i)=> { %>
                         <div class="checkout-product-card">
-                            <img src="/uploads/<%= item.product.productImage[0] %>" alt="Product"
-                                class="checkout-product-image">
+
+                            <div class="image-container">
+                                <img src="/uploads/<%= item.product.productImage[0] %>" alt="Product"class="checkout-product-image">
+                                <% if (item.product.isBlocked) { %>
+                                    <p class="blocked-message">Product unavailable</p>
+                                <% } %>
+                            </div>
+                            
                             <div class="checkout-product-details">
                                 <h3>
                                     <%= item.product.category.name %>
@@ -273,8 +280,11 @@
                         <span id="total">₹<%= totalAmount + 40 %></span>
                     </div>
                 </div>
-                <button type="submit" class="checkout-place-order-btn">Place
-                    Order</button>
+                <% if (address && address.length> 0) { %>
+                    <button type="submit" class="checkout-place-order-btn">Place Order</button>
+                    <% } else { %>
+                        <p>No addresses found. Please add a new address to proceed.</p>
+                        <% } %>
             </div>
         </div>
     </div>
@@ -697,12 +707,43 @@
         }
 
 
-        async function CheckoutForm(totalAmount, event) {
-            event.preventDefault(); // Prevent default form submission
 
-            const cartId = document.querySelector('input[name="cartId"]').value;
-            const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
-            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+
+
+
+        async function CheckoutForm(totalAmount, event) {
+
+            console.log("this is the function checkout function called");
+
+            event.preventDefault();
+
+            const cartId = document.querySelector('input[name="cartId"]')?.value;
+            const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked')?.value;
+
+
+            console.log("this is the selected address", selectedAddress);
+
+            const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value;
+
+            if (!selectedAddress) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Address',
+                    text: 'Please select an address before placing the order.',
+                    showConfirmButton: true,
+                });
+                return;
+            }
+
+            if (!paymentMethod) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Payment Method',
+                    text: 'Please select a payment method.',
+                    showConfirmButton: true,
+                });
+                return;
+            }
 
             const totalPayableElement = document.getElementById('total');
 
@@ -741,25 +782,7 @@
 
             console.log("totalpayable Amount", totalPayable);
 
-            if (!selectedAddress) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Missing Address',
-                    text: 'Please select an address before placing the order.',
-                    showConfirmButton: true,
-                });
-                return;
-            }
 
-            if (!paymentMethod) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Missing Payment Method',
-                    text: 'Please select a payment method.',
-                    showConfirmButton: true,
-                });
-                return;
-            }
 
             const formData = {
                 PayableAmount: totalPayable,
@@ -800,11 +823,13 @@
                         } else {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Error',
-                                text: response.message || 'Something went wrong. Please try again.',
+                                title: response.message || 'Error',
+                                text: response.text || 'Something went wrong. Please try again.',
                                 showConfirmButton: false,
                                 timer: 1500
-                            });
+                            }).then(()=>{
+                                window.location.reload();
+                            })
                         }
                     },
                     error: function (xhr, status, error) {
@@ -919,33 +944,36 @@
                             },
 
                             modal: {
-                                ondismiss:  async function () {
-                                    
-                                    const responses = await fetch('/veryfy_razorpay_payment', {
+                                ondismiss: function () {
+                                    fetch('/veryfy_razorpay_payment', {
                                         method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({
-                                            formData,
-                                            failed: true
-                                        })
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ formData, failed: true })
                                     })
-
-                                    const failure = await responses.json();
-
-                                    if(failure.success == false){
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Payment Failed',
-                                            text: failure.message || 'Payment verification failed. Please try again.',
-                                            showConfirmButton: true,
-                                            timer: 1500
-                                        }).then(()=>{
-                                            window.location.href = '/order';
+                                        .then(response => response.json())
+                                        .then(failure => {
+                                            if (failure.success == false) {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Payment Failed',
+                                                    text: failure.message || 'Payment verification failed. Please try again.',
+                                                    showConfirmButton: true,
+                                                    timer: 1500
+                                                }).then(() => {
+                                                    window.location.href = '/order';
+                                                });
+                                            }
                                         })
-                                    }
-                                    
+                                        .catch(error => {
+                                            console.error('Error verifying payment:', error);
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error',
+                                                text: 'An unexpected error occurred while verifying the payment.',
+                                                showConfirmButton: true,
+                                                timer: 1500
+                                            });
+                                        });
                                 }
                             }
                         };
@@ -957,11 +985,13 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-                            title: result.message||  'Order Creation Failed',
-                            text:  result.text|| 'Failed to create the Razorpay order. Please try again.',
+                            title: result.message || 'Order Creation Failed',
+                            text: result.text || 'Failed to create the Razorpay order. Please try again.',
                             showConfirmButton: false,
                             timer: 1500
-                        });
+                        }).then(()=>{
+                            window.location.reload();
+                        })
                     }
 
                 } catch (error) {

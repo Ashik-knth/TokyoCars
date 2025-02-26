@@ -1,273 +1,276 @@
+<% if (products) { %>
+    <section id="prodetails" class="section-p1">
 
-    <% if (products) { %>
-        <section id="prodetails" class="section-p1">
-
-            <!-- Small Images -->
-            <div class="small-img-group">
-                <div class="small-img-col">
-                    <img src="/uploads/<%= products.productImage[0] %>" class="small-img" alt="">
-                </div>
-                <div class="small-img-col">
-                    <img src="/uploads/<%= products.productImage[1] %>" class="small-img" alt="">
-                </div>
-                <div class="small-img-col">
-                    <img src="/uploads/<%= products.productImage[2] %>" class="small-img" alt="">
-                </div>
+        <!-- Small Images -->
+        <div class="small-img-group">
+            <div class="small-img-col">
+                <img src="/uploads/<%= products.productImage[0] %>" class="small-img" alt="">
             </div>
-
-            <!-- Main Image -->
-            <div class="single-pro-image">
-                <img src="/uploads/<%= products.productImage[0] %>" id="MainImg" alt="">
+            <div class="small-img-col">
+                <img src="/uploads/<%= products.productImage[1] %>" class="small-img" alt="">
             </div>
+            <div class="small-img-col">
+                <img src="/uploads/<%= products.productImage[2] %>" class="small-img" alt="">
+            </div>
+        </div>
 
-            <!-- Product Details -->
-            <div class="single-pro-details">
+        <!-- Main Image -->
+        <div class="single-pro-image">
+            <img src="/uploads/<%= products.productImage[0] %>" id="MainImg" alt="">
+        </div>
 
-                <% if ( percentage > 0) { %>
+        <!-- Product Details -->
+        <div class="single-pro-details">
+
+            <% if ( percentage> 0) { %>
 
                 <div class="discount-box-single">
-                    <span> <%= percentage %>% OFF</span>
+                    <span>
+                        <%= percentage %>% OFF
+                    </span>
                 </div>
-                 
+
                 <% } %>
-                
-                <h4>
-                    <%= products.productName %>
-                </h4>
-               
-                <p> <%= products.stock > 0 ? 'In Stock' : 'Out of Stock' %> </p>
 
-                
-                 <% if (offerPrice>0) { %>
+                    <h4>
+                        <%= products.productName %>
+                    </h4>
 
-                    <h2 style="text-decoration: line-through; color: #000;" >
-                        ₹<%= products.regularPrice %>
-                    </h2>
+                    <p>
+                        <%= products.stock> 0 ? 'In Stock' : 'Out of Stock' %>
+                    </p>
 
-                    <h2>₹<%= offerPrice %></h2>
-                  
-                 <% }else { %>
-                
 
-                    <h2>₹<%= products.regularPrice %></h2>
+                    <% if (offerPrice>0) { %>
 
-                 <% } %>
+                        <h2 style="text-decoration: line-through; color: #000;">
+                            ₹<%= products.regularPrice %>
+                        </h2>
 
-               
+                        <h2>₹<%= offerPrice %>
+                        </h2>
 
-                <input type="number" value='<%= products.stock>0 ? 1 : products.stock %>'' min="1" max="<%= products.stock %> " id="quantity"
+                        <% }else { %>
+
+
+                            <h2>₹<%= products.regularPrice %>
+                            </h2>
+
+                            <% } %>
+
+
+
+                                <input type="number" value='<%= products.stock>0 ? 1 : products.stock %>'' min="1" max="<%= products.stock %> " id="quantity"
                     onchange="quantityChange()">
          
-                <button class="normal" onclick="addToCart('<%= products._id %> ' , '<%= offerPrice %>' , '' )">Add To Cart</button>
-                &nbsp;
-                <button class="normal" onclick="addToWishlist('<%= products._id %>')" > Add To Wishlist</button>
-                <p> Stock : <%= products.stock %></p>
-                <h4>Product Details</h4>
-                <span>
-                    <%= products.description %>
-                </span>
+                <button class="normal" onclick="addToCart(' <%=products._id %> ' , '<%= offerPrice %>' , '' )">Add To
+                                    Cart</button>
+                                    &nbsp;
+                                    <button class="normal" onclick="addToWishlist('<%= products._id %>')"> Add To
+                                        Wishlist</button>
+                                    <p> Stock : <%= products.stock %>
+                                    </p>
+                                    <h4>Product Details</h4>
+                                    <span>
+                                        <%= products.description %>
+                                    </span>
+        </div>
+    </section>
+    <% } %>
+
+        <!-- Featured Products Section -->
+        <section id="product12" class="section-p12">
+            <h2>Featured Products</h2>
+            <!-- <p>Limited Edition Collection</p> -->
+            <div class="pro-containers">
+                <% product.forEach((element)=> { %>
+                    <a href="/singleproduct/<%= element._id %>">
+                        <div class="pros">
+                            <img src="/uploads/<%= element.productImage[0] %>" alt="">
+                            <div class="desi">
+                                <span>
+                                    <%= element.category.name %>
+                                </span>
+                                <h5>
+                                    <%= element.productName %>
+                                </h5>
+                                <div class="stars">
+                                    <i class='bx bxs-stars'></i>
+                                    <i class='bx bxs-stars'></i>
+                                    <i class='bx bxs-stars'></i>
+                                    <i class='bx bxs-stars'></i>
+                                    <i class='bx bxs-stars'></i>
+                                </div>
+                                <h4>
+                                    <%= element.regularPrice %>
+                                </h4>
+                            </div>
+                        </div>
+                    </a>
+                    <% }); %>
             </div>
         </section>
-        <% } %>
 
-            <!-- Featured Products Section -->
-            <section id="product12" class="section-p12">
-                <h2>Featured Products</h2>
-                <!-- <p>Limited Edition Collection</p> -->
-                <div class="pro-containers">
-                    <% product.forEach((element)=> { %>
-                        <a href="/singleproduct/<%= element._id %>">
-                            <div class="pros">
-                                <img src="/uploads/<%= element.productImage[0] %>" alt="">
-                                <div class="desi">
-                                    <span>
-                                        <%= element.category.name %>
-                                    </span>
-                                    <h5>
-                                        <%= element.productName %>
-                                    </h5>
-                                    <div class="stars">
-                                        <i class='bx bxs-stars'></i>
-                                        <i class='bx bxs-stars'></i>
-                                        <i class='bx bxs-stars'></i>
-                                        <i class='bx bxs-stars'></i>
-                                        <i class='bx bxs-stars'></i>
-                                    </div>
-                                    <h4>
-                                        <%= element.regularPrice %>
-                                    </h4>
-                                </div>
-                            </div>
-                        </a>
-                        <% }); %>
-                </div>
-            </section>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const MainImg = document.getElementById("MainImg");
+                const smallImgs = document.querySelectorAll(".small-img");
 
-            <script>
-                document.addEventListener("DOMContentLoaded", () => {
-                    const MainImg = document.getElementById("MainImg");
-                    const smallImgs = document.querySelectorAll(".small-img");
-
-                    // Change the main image when a small image is clicked
-                    smallImgs.forEach(img => {
-                        img.addEventListener("click", () => {
-                            MainImg.src = img.src;
-                        });
-                    });
-
-                    // Zoom functionality
-                    const container = document.querySelector(".single-pro-image");
-
-                    container.addEventListener("mousemove", (e) => {
-                        const rect = container.getBoundingClientRect();
-                        const x = ((e.clientX - rect.left) / rect.width) * 100;
-                        const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-                        MainImg.style.transformOrigin = `${x}% ${y}%`;
-                        MainImg.style.transform = "scale(1.5)";
-                    });
-
-                    container.addEventListener("mouseleave", () => {
-                        MainImg.style.transform = "scale(1)";
-                        MainImg.style.transformOrigin = "center center";
+                // Change the main image when a small image is clicked
+                smallImgs.forEach(img => {
+                    img.addEventListener("click", () => {
+                        MainImg.src = img.src;
                     });
                 });
 
+                // Zoom functionality
+                const container = document.querySelector(".single-pro-image");
+
+                container.addEventListener("mousemove", (e) => {
+                    const rect = container.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+                    MainImg.style.transformOrigin = `${x}% ${y}%`;
+                    MainImg.style.transform = "scale(1.5)";
+                });
+
+                container.addEventListener("mouseleave", () => {
+                    MainImg.style.transform = "scale(1)";
+                    MainImg.style.transformOrigin = "center center";
+                });
+            });
 
 
-                function quantityChange() {
-                    const quantityvalue = document.getElementById("quantity").value;
-                    const quantitymax = document.getElementById("quantity").max;
 
-                    console.log("quantityvalue", quantityvalue);
-                    console.log("quantitymax", quantitymax);
+            function quantityChange() {
+                const quantityInput = document.getElementById("quantity");
+                const quantityValue = Number(quantityInput.value); 
+                const quantityMax = Number(quantityInput.max); 
 
-                    if(quantityvalue < 1){
+                console.log("quantityValue", quantityValue);
+                console.log("quantityMax", quantityMax);
+
+              
+                if (quantityValue < 1) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Quantity is less than 1. Please add at least 1.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    quantityInput.value = 1; 
+                }
+                
+                else if (quantityValue > quantityMax) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning',
+                        text: 'Quantity is more than stock.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    quantityInput.value = quantityMax; 
+                }
+            }
+
+
+            function addToCart(productId, offerPrice) {
+                const quantityValue = document.getElementById("quantity").value;
+
+                console.log("quantityValue", quantityValue);
+
+                console.log("productId", productId);
+
+                console.log("offerPrice", offerPrice);
+
+
+
+
+                $.ajax({
+                    url: '/add-to-cart',
+                    type: 'POST',
+                    data: {
+                        productId: productId,
+                        quantity: quantityValue,
+                        offerPrice: offerPrice
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                window.location.replace('/cart');
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || "Something went wrong",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function () {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Quantity is less than 1 please add atleast 1',
+                            text: 'Something went wrong',
                             showConfirmButton: false,
                             timer: 1500
-                        })
-                        document.getElementById("quantity").value = 1;
-
+                        });
                     }
+                });
+            }
 
-                    if (quantityvalue > quantitymax) {
+
+            function addToWishlist(productId) {
+
+                $.ajax({
+                    url: '/add-to-wishlist',
+                    type: 'POST',
+                    data: {
+                        productId: productId,
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                window.location.replace('/wishlist');
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || "Something went wrong",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function () {
                         Swal.fire({
-                            icon: 'warning',
-                            title: 'Warning',
-                            text: 'Quantity is more than stock',
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong',
                             showConfirmButton: false,
                             timer: 1500
-                        })
-
-                        document.getElementById("quantity").value = parseInt(quantitymax);
+                        });
                     }
+                });
+            }
 
 
 
-
-                }
-
-
-                function addToCart(productId, offerPrice) {
-                    const quantityValue = document.getElementById("quantity").value;
-
-                    console.log("quantityValue", quantityValue);
-
-                    console.log("productId", productId);
-
-                    console.log("offerPrice", offerPrice);
-                    
-                    
-                    
-
-                    $.ajax({
-                        url: '/add-to-cart',
-                        type: 'POST',
-                        data: {
-                            productId: productId,
-                            quantity: quantityValue,
-                            offerPrice: offerPrice
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Success',
-                                    text: response.message,
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                }).then(() => {
-                                    window.location.replace('/cart');
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: response.message || "Something went wrong",
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                            }
-                        },
-                        error: function () {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Something went wrong',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
-                    });
-                }
-
-
-                function addToWishlist(productId) {
-                   
-                    $.ajax({
-                        url: '/add-to-wishlist',
-                        type: 'POST',
-                        data: {
-                            productId: productId,
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Success',
-                                    text: response.message,
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                }).then(() => {
-                                    window.location.replace('/wishlist');
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: response.message || "Something went wrong",
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                            }
-                        },
-                        error: function () {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Something went wrong',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
-                    });
-                }
-
-
-
-            </script>
-    
+        </script>

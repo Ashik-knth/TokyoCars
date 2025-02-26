@@ -43,7 +43,7 @@ user_router.get('/address', user_block, user_controller.address);
 
 user_router.get('/order', user_block, user_controller.order);
 
-user_router.get('/orderdetails/:id', user_block, user_controller.orderdetails);
+user_router.get('/orderdetails/:id',  user_block ,  user_controller.orderdetails);
 
 user_router.get('/reset-password',  user_controller.reset_password);
 
@@ -59,7 +59,7 @@ user_router.get('/new-password',  user_controller.new_password);
 
 user_router.post('/new-password',   user_controller.new_password_post);
 
-user_router.get('/checkout',  user_block,  user_controller.checkout);
+user_router.get('/checkout', user_block,  user_controller.checkout);
 
 user_router.post("/add-to-cart",cart_controller.cart);
 

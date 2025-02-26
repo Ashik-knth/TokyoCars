@@ -5,10 +5,9 @@
     padding: 20px;
     width: 103%;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     height: 90%;
     margin-top: 18%;
-    box-shadow: 13px 13px 54px rgba(0, 0, 0, 0.613);
+    box-shadow: 1px 4px 15px rgba(0, 0, 0, 0.613);
     cursor:progress;
 }
 

@@ -1,3 +1,18 @@
+
+<% if (errors && errors.blockedProduct) { %>
+    <script>
+     Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: '<%= errors.blockedProduct %>',
+      }).then(()=>{
+        window.location.reload();
+      })
+    </script>
+  <% } %>
+
+
+
 <section id="page-header" class="about-header">
     <h2>#let's_talk</h2>
     <p>LEAVE A MESSAGE, We love to hear from you!</p>
@@ -22,15 +37,27 @@
                         <td>
 
                             <i class='bx bx-x-circle cart-remove '
-                                onclick="removeFromCart('<%= item.product._id %>')"></i>
+                                onclick="removeFromCart('<%= item.product._id %>')"></i> 
 
                         </td>
-                        <td><img src="/uploads/<%= item.product.productImage[0] %>" alt="Cart Image"></td>
+                        
+                        <td id="cart-images">
+                            <div class="image-container">
+                                <img src="/uploads/<%= item.product.productImage[0] %>" alt="Cart Image" class="product-image">
+                                <% if (item.product.isBlocked || item.product.stock == 0) { %>
+                                    <p class="blocked-message"><%= item.product.stock==0 ? 'Product out of stock' : 'Product is unavailable' %></p>
+                                <% } %>
+
+                                <% if (item.product.stock<item.quantity) { %>
+                                    <p class="quantity-message">product quantity less than product stock  current stock : <%= item.product.stock %></p>
+                                <% } %>
+                            </div>
+                        </td>
                         <td>
                             <%= item.product.productName %>
                         </td>
 
-                        <% const offerPrice=(()=> { 
+                        <% const offerPrice=(()=> {
                             const productOffer = typeof item.product.productOffer === "number" &&
                             !isNaN(item.product.productOffer) ? item.product.productOffer : 0;
                             const categoryOffer = typeof item.product.categoryofferprice === "number" &&
@@ -39,30 +66,30 @@
 
 
                             if (productOffer > 0 && categoryOffer > 0) {
-                                return Math.min(productOffer, categoryOffer);
-                                } else if (productOffer > 0) {
-                                return productOffer;
-                                } else if (categoryOffer > 0) {
-                                return categoryOffer;
-                                } else {
-                                return 0;
-                                }
-                                })();
+                            return Math.min(productOffer, categoryOffer);
+                            } else if (productOffer > 0) {
+                            return productOffer;
+                            } else if (categoryOffer > 0) {
+                            return categoryOffer;
+                            } else {
+                            return 0;
+                            }
+                            })();
 
-                                if (offerPrice > 0) { %>
+                            if (offerPrice > 0) { %>
 
-                                    <td>₹<%= offerPrice %>
-                                    </td>
+                            <td>₹<%= offerPrice %>
+                            </td>
 
-                                    <% } else { %>
+                            <% } else { %>
 
-                                        <td>₹<%= item.product.regularPrice %>
-                                        </td>
-                            
-                            
-                            <% } %>    
-                                   
-                            
+                                <td>₹<%= item.product.regularPrice %>
+                                </td>
+
+
+                                <% } %>
+
+
                                     <td>
 
                                         <!-- Decrement Button -->
@@ -79,7 +106,8 @@
 
 
                                     </td>
-                                    <td id="totalAmount-<%= index %>">₹<%= item.quantity *   offerPrice || item.quantity * item.product.regularPrice %>
+                                    <td id="totalAmount-<%= index %>">₹<%= item.quantity * offerPrice || item.quantity *
+                                            item.product.regularPrice %>
                                     </td>
                     </tr>
                     <% }); %>
@@ -125,10 +153,18 @@
             <% } %>
 
     </div>
+
 </section>
 
 
 <script>
+
+
+
+   function blockedProducts(){
+    console.log("function called");
+    
+   }
 
 
     function handleQuantityChange(productId, change, maxStock, index, regularPrice) {
@@ -153,8 +189,11 @@
                 text: 'Quantity cannot be less than 1',
                 showConfirmButton: false,
                 timer: 1500
+            }).then(()=>{
+                newValue = 1;
+                window.location.reload();
             })
-            newValue = 1; // Minimum quantity
+            // Minimum quantity
         } else if (newValue > maxStock) {
             newValue = maxStock;
             Swal.fire({
@@ -163,7 +202,9 @@
                 text: 'Quantity exceeds stock',
                 showConfirmButton: false,
                 timer: 1500
-            });
+            }).then(()=>{
+                window.location.reload();
+            })
         }
 
         // Update the input field's value

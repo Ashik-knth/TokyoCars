@@ -1,7 +1,7 @@
 <div class="order-detail-container">
 
     <div class="order-detail-header">
-        <h1 class="order-detail-number">Order # <%= order.OrderId %>
+        <h1 class="order-detail-number">Order # <%= order?.OrderId %>
         </h1>
 
     </div>
@@ -10,29 +10,29 @@
         <div class="order-detail-info-group">
             <h3>Order Date</h3>
             <p>
-                <%= order.orderDate.toDateString() %>
+                <%= order?.orderDate.toDateString() %>
             </p>
 
-            <% if (order.items[0].PaymentStatus==='Failed' ) { %>
+            <% if (order?.items[0].PaymentStatus==='Failed' ) { %>
 
                 <button id="paymentButton"
-                    onclick="Repayment('<%= order._id %>' , '<%= order.payableAmount %>', '<%= order.totalAmount %>', '<%= order.couponId%>')">Repayment</button>
+                    onclick="Repayment('<%= order?._id %>' , '<%= order?.payableAmount %>', '<%= order?.totalAmount %>', '<%= order?.couponId%>')">Repayment</button>
 
                 <% } %>
         </div>
         <div class="order-detail-info-group">
             <h3>Shipping Address</h3>
             <p>
-                <%= order.address.addressName%><br>
-                    <%= order.address.streetAddress %>
+                <%= order?.address?.addressName%><br>
+                    <%= order?.address?.streetAddress %>
             </p>
             <p>
-                <%= order.address.city %>,<%= order.address.state %>
+                <%= order?.address.city %>,<%= order?.address.state %>
             </p>
         </div>
         <div class="order-detail-info-group">
             <h3>
-                <%= order.paymentMethod %>
+                <%= order?.paymentMethod %>
             </h3>
             <!-- <p>VISA ending in 4242</p> -->
         </div>
@@ -41,7 +41,7 @@
 
             <% if (delivered) { %>
 
-                <a class="invoice-btn" href="/invoice/<%= order._id %>">Invoice</a>
+                <a class="invoice-btn" href="/invoice/<%= order?._id %>">Invoice</a>
 
                 <% } %>
 
@@ -53,7 +53,7 @@
 
     <div class="order-detail-items">
 
-        <% order.items.forEach((element, index)=> { %>
+        <% order?.items?.forEach((element, index)=> { %>
 
 
 
@@ -209,7 +209,7 @@
     <div class="order-detail-summary">
         <div class="order-detail-summary-row">
             <span>Subtotal</span>
-            <span>₹<%= order.totalAmount%></span>
+            <span>₹<%= order?.totalAmount%></span>
         </div>
         <div class="order-detail-summary-row">
             <span>Delivery Charge</span>
@@ -221,7 +221,7 @@
         </div>
         <div class="order-detail-summary-row">
             <span>Total</span>
-            <span>₹<%= order.payableAmount %></span>
+            <span>₹<%= order?.payableAmount %></span>
         </div>
     </div>
 
@@ -441,13 +441,18 @@
 
         try {
 
+            console.log("this is my order id",orderId);
+            console.log("this is my payableAmount",PayableAmount);
+            console.log("this is Subtotalamount",SubtotalAmount);
+            console.log("this is my couponId",couponId);
+
             const response = await fetch('/create_razorpay_oder', {
 
                 method: 'POST',
 
                 headers: { 'Content-Type': 'application/json' },
 
-                body: JSON.stringify({ cartId: orderId, PayableAmount: PayableAmount, SubtotalAmount: SubtotalAmount, couponId: couponId })
+                body: JSON.stringify({ orderId: orderId, PayableAmount: PayableAmount, SubtotalAmount: SubtotalAmount, couponId: couponId })
             })
 
             const result = await response.json();

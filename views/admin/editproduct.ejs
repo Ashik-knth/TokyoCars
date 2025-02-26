@@ -2,50 +2,50 @@
 <link rel="stylesheet" href="/admin/css/product.css">
 
 <style>
-.image-box {
-    width: 200px;
-    height: 200px;
-    border: 2px dashed #ccc;
-    margin: 10px;
-    overflow: hidden;
-    position: relative;
-}
+    .image-box {
+        width: 200px;
+        height: 200px;
+        border: 2px dashed #ccc;
+        margin: 10px;
+        overflow: hidden;
+        position: relative;
+    }
 
-.preview-image {
-    max-width: 100%;
-    max-height: 100%;
-    display: block;
-}
+    .preview-image {
+        max-width: 100%;
+        max-height: 100%;
+        display: block;
+    }
 
-.containers {
-    display: flex;
-    flex-wrap: wrap;
-}
+    .containers {
+        display: flex;
+        flex-wrap: wrap;
+    }
 
-#cropArea {
-    max-width: 500px;
-    margin: 20px 0;
-    display: none;
-}
+    #cropArea {
+        max-width: 500px;
+        margin: 20px 0;
+        display: none;
+    }
 
-#imageForCrop {
-    max-width: 100%;
-}
+    #imageForCrop {
+        max-width: 100%;
+    }
 
-.buttons {
-    margin: 10px 0;
-}
+    .buttons {
+        margin: 10px 0;
+    }
 
-.button-group button {
-    margin-right: 10px;
-}
+    .button-group button {
+        margin-right: 10px;
+    }
 
-.color-danger {
-    color: red;
-    font-weight: bold;
-    font-size: 15px;
-    margin: 10px 0;
-}
+    .color-danger {
+        color: red;
+        font-weight: bold;
+        font-size: 15px;
+        margin: 10px 0;
+    }
 </style>
 
 <div class="container">
@@ -54,13 +54,15 @@
     </div>
 
     <div class="form-container">
-        <form id="addProductForm" action="/admin/editproduct/<%= product._id %>" method="post" enctype="multipart/form-data" >
+        <form id="addProductForm" action="/admin/editproduct/<%= product._id %>" method="post"
+            enctype="multipart/form-data">
             <div class="form-group">
                 <input type="hidden" id="productId" name="productId" value="<%= product._id %>">
                 <p class="error-message"></p>
                 <label class="required">Product Name</label>
-                <p id="name-error" class="error-message" ></p>
-                <input type="text" id="productName" name="productName" required placeholder="Enter product name" value="<%= product.productName %>">
+                <p id="name-error" class="error-message"></p>
+                <input type="text" id="productName" name="productName" required placeholder="Enter product name"
+                    value="<%= product.productName %>">
             </div>
 
             <div class="form-group">
@@ -68,32 +70,35 @@
                 <label class="required">Category</label>
                 <p id="category-error" class="error-message"></p>
                 <select id="category" name="category" required>
-                    <% category.forEach(element => { %>
-                        <option value="<%= element._id %>" <%= product.category.equals(element._id) ? 'selected' : '' %>>
+                    <% category.forEach(element=> { %>
+                        <option value="<%= element._id %>" <%=product.category.equals(element._id) ? 'selected' : '' %>>
                             <%= element.name %>
                         </option>
-                    <% }) %>
+                        <% }) %>
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="required">Price</label>
                 <p id="price-error" class="error-message"></p>
-                <input type="number" id="price" name="price" required min="0" step="0.01" placeholder="Enter price" value="<%= product.regularPrice %>">
+                <input type="number" id="price" name="price" required min="1" step="0.01" placeholder="Enter price"
+                    value="<%= product.regularPrice %>">
             </div>
 
             <div class="form-group">
 
                 <label class="required">Stock</label>
                 <p id="stock-error" class="error-message"></p>
-                <input type="number" id="stock" name="stock" required min="0" placeholder="Enter stock quantity" value="<%= product.stock %>">
+                <input type="number" id="stock" name="stock" required min="1" placeholder="Enter stock quantity"
+                    value="<%= product.stock %>">
             </div>
 
             <div class="form-group">
                 <p class="error-message"></p>
                 <label class="required">Description</label>
                 <p id="description-error" class="error-message"></p>
-                <textarea id="description" name="description" required placeholder="Enter product description"><%= product.description %></textarea>
+                <textarea id="description" name="description" required
+                    placeholder="Enter product description"><%= product.description %></textarea>
             </div>
 
             <div class="containers">
@@ -101,18 +106,18 @@
                     <input type="file" name="productImage1" accept="image/*" onchange="loadImageForCrop(this, 1)">
                     <img id="preview1" class="preview-image" src="/uploads/<%= product.productImage[0] %>">
                 </div>
-            
+
                 <div class="image-box">
                     <input type="file" name="productImage2" accept="image/*" onchange="loadImageForCrop(this, 2)">
                     <img id="preview2" class="preview-image" src="/uploads/<%= product.productImage[1] %>">
                 </div>
-            
+
                 <div class="image-box">
                     <input type="file" name="productImage3" accept="image/*" onchange="loadImageForCrop(this, 3)">
                     <img id="preview3" class="preview-image" src="/uploads/<%= product.productImage[2] %>">
                 </div>
             </div>
-            <div id="cropArea"> 
+            <div id="cropArea">
                 <img id="imageForCrop" alt="Crop Area">
                 <div class="buttons">
                     <button type="button" class="btn btn-primary" onclick="cropImage()">Crop Image</button>
@@ -184,22 +189,22 @@ function cancelCrop() {
 <script>let cropper = null;
     let currentImageNumber = null;
     let croppedImages = {}; // Store all cropped images
-    
+
     function loadImageForCrop(input, imageNumber) {
         if (input.files && input.files[0]) {
             currentImageNumber = imageNumber;
-    
+
             const reader = new FileReader();
             reader.onload = function (e) {
                 document.getElementById('cropArea').style.display = 'block';
-    
+
                 const image = document.getElementById('imageForCrop');
                 image.src = e.target.result;
-    
+
                 if (cropper) {
                     cropper.destroy();
                 }
-    
+
                 cropper = new Cropper(image, {
                     aspectRatio: 4 / 3,
                     viewMode: 1
@@ -208,36 +213,36 @@ function cancelCrop() {
             reader.readAsDataURL(input.files[0]);
         }
     }
-    
+
     function cropImage() {
         if (cropper) {
             const croppedData = cropper.getCroppedCanvas().toDataURL();
-            
+
             // Store the cropped image data
             croppedImages[currentImageNumber] = croppedData;
-    
+
             // Update the preview
             const preview = document.getElementById('preview' + currentImageNumber);
             preview.src = croppedData;
             preview.style.display = 'block';
-    
+
             // Create a new File object from the cropped data
             const binaryData = atob(croppedData.split(',')[1]);
             const array = [];
             for (let i = 0; i < binaryData.length; i++) {
                 array.push(binaryData.charCodeAt(i));
             }
-            const file = new File([new Uint8Array(array)], 'cropped_image.jpg', {type: 'image/jpeg'});
-    
+            const file = new File([new Uint8Array(array)], 'cropped_image.jpg', { type: 'image/jpeg' });
+
             // Update the file input
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
             document.querySelector(`input[type="file"][onchange*="loadImageForCrop(this, ${currentImageNumber}"]`).files = dataTransfer.files;
-    
+
             cancelCrop();
         }
     }
-    
+
     function cancelCrop() {
         if (cropper) {
             cropper.destroy();
@@ -245,125 +250,121 @@ function cancelCrop() {
         }
         document.getElementById('cropArea').style.display = 'none';
     }
-    
+
     // Add this to your form submit handler
-    document.getElementById('addProductForm').onsubmit = function(e) {
+    document.getElementById('addProductForm').onsubmit = function (e) {
         // If there are cropped images, make sure they're included in the form data
         const formData = new FormData(this);
         for (let imageNumber in croppedImages) {
             formData.append('croppedImages', croppedImages[imageNumber]);
         }
     };
-    
+
     function ValidateForm() {
-    console.log("Validating form...");
-    // event.preventDefault(); 
-    clearErrorMessage(); 
+        console.log("Validating form...");
+        // event.preventDefault(); 
+        clearErrorMessage();
 
-    let isValid = true; 
+        let isValid = true;
 
-    const productName = document.getElementById("productName")?.value?.trim();
-    const category = document.getElementById("category")?.value?.trim();
-    const price = document.getElementById("price")?.value?.trim();
-    const stock = document.getElementById("stock")?.value?.trim();
-    const description = document.getElementById("description")?.value?.trim();
-    const image1 = document.getElementById("image1")?.value?.trim();
-    const image2 = document.getElementById("image2")?.value?.trim();
-    const image3 = document.getElementById("image3")?.value?.trim();
+        const productName = document.getElementById("productName")?.value?.trim();
+        const category = document.getElementById("category")?.value?.trim();
+        const price = document.getElementById("price")?.value?.trim();
+        const stock = document.getElementById("stock")?.value?.trim();
+        const description = document.getElementById("description")?.value?.trim();
+        const image1 = document.getElementById("image1")?.value?.trim();
+        const image2 = document.getElementById("image2")?.value?.trim();
+        const image3 = document.getElementById("image3")?.value?.trim();
 
-    const nameError = document.getElementById("name-error");
-    const categoryError = document.getElementById("category-error");
-    const priceError = document.getElementById("price-error");
-    const stockError = document.getElementById("stock-error");
-    const descriptionError = document.getElementById("description-error");
-    const image1Error = document.getElementById("image1-error");
-    const image2Error = document.getElementById("image2-error");
-    const image3Error = document.getElementById("image3-error");
+        const nameError = document.getElementById("name-error");
+        const categoryError = document.getElementById("category-error");
+        const priceError = document.getElementById("price-error");
+        const stockError = document.getElementById("stock-error");
+        const descriptionError = document.getElementById("description-error");
+        const image1Error = document.getElementById("image1-error");
+        const image2Error = document.getElementById("image2-error");
+        const image3Error = document.getElementById("image3-error");
 
-    const categoryRegex = /^[A-Za-z]+$/;
 
-    if (!productName) {
-        showError(nameError, "Product name is empty");
-        isValid = false;
-    } else if (productName.length < 3) {
-        showError(nameError, "Product name must be at least 3 characters");
-        isValid = false;
-    } else if (productName.length > 50) {
-        showError(nameError, "Product name must be less than 50 characters");
-        isValid = false;
-    } else if (!/^[A-Za-z\s]+$/.test(productName)) {
-        showError(nameError, "Product name must contain only letters and spaces");
-        isValid = false;
+        if (!productName) {
+                showError(nameError, "Product name is empty");
+                isValid = false;
+            } else if (productName.length < 3) {
+                showError(nameError, "Product name must be at least 3 characters");
+                isValid = false;
+            } else if (productName.length > 50) {
+                showError(nameError, "Product name must be less than 50 characters");
+                isValid = false;
+            }
+
+        if (!category) {
+            showError(categoryError, "Category is empty");
+            isValid = false;
+        }
+
+        if (!price) {
+            showError(priceError, "Price is empty");
+            isValid = false;
+        } else if (parseFloat(price) < 0) {
+            showError(priceError, "Price must be greater than 0");
+            isValid = false;
+        } else if (price == 0) {
+            showError(priceError, "Price must be greater than 0");
+            isValid = false;
+
+        }
+
+        if (!stock) {
+            console.log("stock validation is working");
+
+            showError(stockError, "Stock is empty");
+            isValid = false;
+
+        } else if (Number(stock) < 0) {
+
+            showError(stockError, "Stock must be greater than  0");
+            isValid = false;
+
+
+        } else if (stock == 0) {
+
+            showError(stockError, "Stock must be greater than  0");
+            isValid = false;
+
+        }
+
+        if (!description) {
+            showError(descriptionError, "Description is empty");
+            isValid = false;
+        }
+
+
+
+
+        if (isValid) {
+            document.getElementById("addProductForm").submit();
+        }
     }
 
-    if (!category) {
-        showError(categoryError, "Category is empty");
-        isValid = false;
-    } 
 
-    if (!price) {
-        showError(priceError, "Price is empty");
-        isValid = false;
-    } else if (price<0){
-        showError(priceError, "Price must be greater than 0");
-        isValid = false;
+    function showError(element, message) {
+        if (element) {
+            element.textContent = message;
+            element.style.color = "red";
+            element.style.display = "block";
+            element.style.fontSize = "12px";
+        }
     }
 
-    if (!stock) {
-        showError(stockError, "Stock is empty");
-        isValid = false;
-    } else if (parseInt(stock) < 0) {
-        showError(stockError, "Stock must be greater than or equal to 0");
-        isValid = false;
-    }
-
-    if (!description) {
-        showError(descriptionError, "Description is empty");
-        isValid = false;
-    }
-
-    if (!image1) {
-        showError(image1Error, "Image 1 is empty");
-        isValid = false;
-    }
-
-    if (!image2) {
-        showError(image2Error, "Image 2 is empty");
-        isValid = false;
-    }
-
-    if (!image3) {
-        showError(image3Error, "Image 3 is empty");
-        isValid = false;
+    function clearErrorMessage() {
+        console.log("Clearing error messages...");
+        const errorMessages = document.querySelectorAll(".error-message");
+        errorMessages.forEach((element) => {
+            element.textContent = "";
+            element.style.display = "none";
+        });
     }
 
 
-    if (isValid) {
-        document.getElementById("addProductForm").submit();
-    }
-}
-
-
-function showError(element, message) {
-    if (element) {
-        element.textContent = message;
-        element.style.color = "red";
-        element.style.display = "block";
-        element.style.fontSize = "12px";
-    }
-}
-
-function clearErrorMessage() {
-    console.log("Clearing error messages...");
-    const errorMessages = document.querySelectorAll(".error-message");
-    errorMessages.forEach((element) => {
-        element.textContent = "";
-        element.style.display = "none";
-    });
-}
-       
-    
-    </script>
+</script>
 <script src="/admin/js/editproduct.js"></script>
-
-

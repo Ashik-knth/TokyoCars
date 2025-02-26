@@ -387,23 +387,63 @@ exports.signup = (req, res) => {
     });
 }
 
-exports.blog = (req, res) => {
+exports.blog = async (req, res) => {
     const user = req.session.Userdata;
-    res.render("user/blog", { user });
-}
 
-exports.about = (req, res) => {
-    let user = req.session.Userdata;
-    res.render("user/about", {
-        title: "ABOUT PAGE",
+    let wishlist_length = 0;
+
+    const wishlist = await wishlistSchema.findOne({ userId: user._id });
+
+    if (wishlist) {
+        wishlist_length = wishlist.items.length;
+    }
+    res.render("user/blog", {
+        title: "BLOG PAGE",
         layout: "layouts/user_layout",
-        user
+        user,
+        wishlist_length
     });
 }
 
-exports.contact = (req, res) => {
+exports.about = async (req, res) => {
+    let user = req.session.Userdata;
+
+    let wishlist_length = 0;
+
+    const wishlist = await wishlistSchema.findOne({ userId: user._id });
+
+    if (wishlist) {
+        wishlist_length = wishlist.items.length;
+    }
+    res.render("user/about", {
+        title: "ABOUT PAGE",
+        layout: "layouts/user_layout",
+        user,
+        wishlist_length
+    });
+}
+
+exports.contact = async (req, res) => {
     const user = req.session.Userdata;
-    res.render("user/contact", { user });
+
+
+    let wishlist_length = 0;
+
+    const wishlist = await wishlistSchema.findOne({ userId: user._id });
+
+    if (wishlist) {
+        wishlist_length = wishlist.items.length;
+    }
+
+
+    console.log("rourer is called contact ");
+
+    res.render("user/contact", {
+        title: "Contact PAGE",
+        layout: "layouts/user_layout",
+        user,
+        wishlist_length
+    });
 }
 
 
@@ -418,12 +458,12 @@ exports.shop = async (req, res) => {
         const categorys = req.query.category || null;
 
 
-        console.log("This is our filter",filter);
-        console.log("this is our page",page);
-        console.log("this is our search",search);
-        console.log("this is our categorys",categorys);
-    
-            
+        console.log("This is our filter", filter);
+        console.log("this is our page", page);
+        console.log("this is our search", search);
+        console.log("this is our categorys", categorys);
+
+
 
         const user = req.session.Userdata;
 
@@ -633,7 +673,7 @@ exports.profile = async (req, res) => {
     const user = req.session.Userdata;
     console.log("This is my user", user);
 
-    const userprofile = await userSchema.findById(user._id);
+    const userprofile = await userSchema.findById(user?._id);
 
     res.render("user/profile", {
         title: "TOKYO CARS",
@@ -648,19 +688,27 @@ exports.address = async (req, res) => {
 
     const address = await addressSchema.find({ userId: user?._id, isDeleted: false });
 
+    const userprofile = await userSchema.findById(user._id);
+
+    console.log("this is my addreessssssoooooooo", userprofile);
+
+
     console.log("This is my address", address);
 
     res.render("user/address", {
         title: "TOKYO CARS",
         layout: "layouts/user_profile_layout",
         user,
-        address
+        address,
+        userprofile
     });
 }
 
 exports.order = async (req, res) => {
     const user = req.session.Userdata;
     console.log("This is my useriddddddddd", user);
+
+    const userprofile = await userSchema.findById(user._id);
 
     const orders = await orderSchema.find({ user: user?._id }).sort({ orderDate: -1 }).populate("items.product").populate("address");
     console.log("This is my orders", orders);
@@ -669,12 +717,14 @@ exports.order = async (req, res) => {
         title: "TOKYO CARS",
         layout: "layouts/user_profile_layout",
         user,
-        orders
+        orders,
+        userprofile
     });
 }
 
 exports.orderdetails = async (req, res) => {
     const user = req.session.Userdata;
+    const userprofile = await userSchema.findById(user._id);
     const id = req.params.id;
     console.log("This is my order id", id);
 
@@ -682,7 +732,7 @@ exports.orderdetails = async (req, res) => {
 
     const order = await orderSchema.findById(id).populate("items.product").populate("address");
 
-    
+
 
 
     for (let item of order.items) {
@@ -697,10 +747,10 @@ exports.orderdetails = async (req, res) => {
     order.items = Array.isArray(order.items) ? order.items : [];
 
 
-    const delivered = order.items.some((item)=> item.orderStatus == 'Delivered');
+    const delivered = order.items.some((item) => item.orderStatus == 'Delivered');
 
-    console.log("This is the delivered product",delivered);
-    
+    console.log("This is the delivered product", delivered);
+
 
     res.render("user/orderdetails", {
         title: "TOKYO CARS",
@@ -709,6 +759,7 @@ exports.orderdetails = async (req, res) => {
         order,
         discountPrice,
         delivered,
+        userprofile
     });
 }
 
@@ -717,7 +768,7 @@ exports.reset_password = (req, res) => {
     res.render("user/resetpassword", {
         title: "TOKYO CARS",
         layout: false,
-        user
+        user,
     });
 }
 
@@ -741,12 +792,40 @@ exports.new_password = (req, res) => {
 
 
 exports.checkout = async (req, res) => {
+
+    console.log("check out page is calledddddd");
+
     const user = req.session.Userdata;
     const cart = await cartSchema.find({ user: user?._id }).populate('items.product');
+
+    console.log("and this is the product caaart", cart);
+
 
     if (!cart || cart.length === 0) {
         console.log("Cart is empty");
 
+        return res.redirect("/cart");
+    }
+
+    const hasBlockedProduct = cart[0]?.items.some(item => item.product.isBlocked);
+
+    const productquantitycheck = cart[0]?.items.find(item => item.product.stock < item.quantity)
+
+    if (productquantitycheck) {
+        return res.redirect('/cart')
+    }
+
+    console.log("this is the quantitycheck ", productquantitycheck);
+
+
+    if (hasBlockedProduct) {
+
+        return res.redirect("/cart");
+    }
+
+    const outofstock = cart[0]?.items.some(item => item.product.stock == 0);
+
+    if (outofstock) {
         return res.redirect("/cart");
     }
 
@@ -1024,19 +1103,29 @@ exports.profile_update = async (req, res) => {
 
         const errors = {};
 
-        const usernameRegex = /^[a-zA-Z0-9]+$/;
+        const numberSpaceRegex = /^[0-9 ]+$/;
+
         const phoneRegex = /^[0-9]+$/;
 
         if (username === "") {
             errors.username_error = " Username required";
-        } else if (usernameRegex.test(username)) {
-            errors.username_error = "User name must be alphanumeric";
-        } else if (!phoneRegex.test(phone)) {
-            errors.phone_error = "Phone number must be numeric";
-        } else if (phone.length !== 10) {
-            errors.phone_error = "Phone number must be 10 digits";
-        } else if (phone === "") {
-            errors.phone_error = "Phone number required";
+        } else if (numberSpaceRegex.test(username)) {
+            errors.username_error = "User name must be alphabets charecter";
+        }
+
+
+        if (phone) {
+
+            if (!phoneRegex.test(phone)) {
+
+                errors.phone_error = "Phone number must be numeric";
+
+            } else if (phone === "") {
+                errors.phone_error = "Phone number required";
+            } else if (phone.length > 10) {
+                errors.phone_error = "Phone number should not exceed 10 digits";
+            }
+
         }
 
         if (Object.keys(errors).length > 0) {
@@ -1068,10 +1157,47 @@ exports.place_order = async (req, res) => {
         console.log('coupon id', couponId);
 
 
-        if(paymentMethod == "Cash on Delivery" && 1000<  PayableAmount ){
+        const carts = await cartSchema.findById(cartId).populate("items.product");
 
-            return res.status(400).json({success: false, message: "1000 Above not Allowed Cash on delivery"});
-            
+
+
+        const productBlock = carts.items.some(item => item.product.isBlocked);
+
+        const outofstock = carts.items.some(item => item.product.stock == 0);
+
+        console.log("yessssssssssssssssssssssssssssssssssssss", productBlock);
+
+        console.log("outttttttttttttttttttt", outofstock);
+
+        const productquantitycheck = carts.items.some(item => item.product.stock < item.quantity)
+
+        console.log("this is quantity less than productoooooo ", productquantitycheck);
+
+
+        if (productquantitycheck) {
+
+            console.log("and  is itttttttttt worrrrrrkoooooo");
+
+            return res.status(200).json({ success: false, message: ` product quantity less than stock` })
+        }
+
+
+        if (productBlock) {
+
+            return res.status(200).json({ success: false, message: "Poduct is Not Awailable" })
+        }
+
+
+        if (outofstock) {
+            return res.status(200).json({ success: false, message: "Product is out of Stock" });
+        }
+
+
+
+        if (paymentMethod == "Cash on Delivery" && 5000 < PayableAmount) {
+
+            return res.status(400).json({ success: false, message: "1000 Above not Allowed Cash on delivery" });
+
         }
 
 
@@ -1111,7 +1237,7 @@ exports.place_order = async (req, res) => {
 
 
 
-        console.log("this is my boady", req.body);
+        console.log("this is my boadysssssss", req.body);
 
 
         let shippingCharges = 40;
@@ -1386,8 +1512,14 @@ exports.cancel_order = async (req, res) => {
                     console.log("Product offerrrrr priceeeeeeeeee", product.price);
 
 
+                    console.log("lengthhhhhhhhhh", product.length);
 
-                    const refundedAmount = product.price * product.quantity - product.discount + 40;
+
+
+                    const refundedAmount = product.price * product.quantity - product.discount;
+
+                    console.log("this is the refunded amount", refundedAmount);
+
 
                     wallet.balance += refundedAmount;
 
@@ -1425,31 +1557,38 @@ exports.cancel_order = async (req, res) => {
     }
 }
 
-exports.profile_reset = (req, res) => {
+exports.profile_reset = async (req, res) => {
     const user = req.session.Userdata;
+
+    const userprofile = await userSchema.findById(user._id);
 
     res.render("user/profile_reset", {
         title: "TOKYO CARS",
         layout: "layouts/user_profile_layout",
-        user
+        user,
+        userprofile
     })
 }
 
-exports.profile_reset_otp = (req, res) => {
+exports.profile_reset_otp = async (req, res) => {
     const user = req.session.Userdata;
+    const userprofile = await userSchema.findById(user._id);
     res.render("user/profile_otp", {
         title: "TOKYO CARS",
         layout: "layouts/user_profile_layout",
-        user
+        user,
+        userprofile
     })
 }
 
-exports.profile_new_password = (req, res) => {
+exports.profile_new_password = async (req, res) => {
     const user = req.session.Userdata;
+    const userprofile = await userSchema.findById(user._id);
     res.render("user/profile-newpassword", {
         title: "TOKYO CARS",
         layout: "layouts/user_profile_layout",
-        user
+        user,
+        userprofile
     })
 }
 
@@ -1459,24 +1598,26 @@ exports.wallet = async (req, res) => {
 
         user = req.session.Userdata;
 
-        
+        const userprofile = await userSchema.findById(user._id);
+
+
         const objectId = new mongoose.Types.ObjectId(user._id);
 
         const wallets = await walletSchema.aggregate([{
-        
-                $match:{
-                   user : objectId
-                },    
+
+            $match: {
+                user: objectId
+            },
         },
 
 
-        {$unwind:"$wallet_history"},
-    
+        { $unwind: "$wallet_history" },
+
         {
-            $sort: { "wallet_history.date": -1 } 
+            $sort: { "wallet_history.date": -1 }
         }
-    
-    ])
+
+        ])
 
 
         console.log("This is my walletsssssssssss", wallets);
@@ -1485,7 +1626,8 @@ exports.wallet = async (req, res) => {
             title: "Tokyo Cars Wallet",
             layout: "layouts/user_profile_layout",
             user,
-            wallets
+            wallets,
+            userprofile
         })
 
     } catch (error) {
@@ -1696,13 +1838,11 @@ exports.wishlist = async (req, res) => {
 
     let wishlist_length = 0;
 
-    const wishlist = await wishlistSchema.findOne({ userId: user._id }).populate("items.product");
+    let wishlist = await wishlistSchema.findOne({ userId: user._id }).populate("items.product");
 
     if (!wishlist) {
-        return res.status(404).json({ success: false, message: "Wishlist not found" });
+        wishlist = { items: [] }
     }
-
-
     wishlist_length = wishlist.items.length;
 
 
@@ -1719,7 +1859,7 @@ exports.wishlist = async (req, res) => {
         layout: "layouts/user_layout",
         user,
         wishlist_length,
-        wishlist
+        wishlist: wishlist || { items: [] },
     })
 }
 
@@ -1739,7 +1879,7 @@ exports.add_to_wishlist = async (req, res) => {
         console.log("Product", product);
 
         if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found" });
+            return res.status(200).json({ success: false, message: "Product not found" });
         }
         let wishlist = await wishlistSchema.findOne({ userId: user._id });
         if (!wishlist) {
@@ -1748,9 +1888,13 @@ exports.add_to_wishlist = async (req, res) => {
                 items: [{ product: productId }]
             });
         } else {
-            const item = wishlist.items.find(item => item.product.toString() === productId);
+            const item = wishlist.items.find(item => item.product.toString() === product._id.toString());
             if (item) {
-                return res.status(400).json({ success: false, message: "Product already in wishlist" });
+                console.log("called the message");
+
+                return res.status(200).json({ success: false, message: "Product already in wishlist" });
+
+
             }
             wishlist.items.push({ product: productId });
 
@@ -1865,7 +2009,7 @@ exports.returnOrder = async (req, res) => {
 
             value.reasonofReturn = message;
 
-            const refundedAmount = value.price * value.quantity - value.discount + 40;
+            const refundedAmount = value.price * value.quantity - value.discount;
 
             console.log("This is my refunded amount", refundedAmount);
 
@@ -1909,98 +2053,130 @@ exports.returnOrder = async (req, res) => {
 }
 
 
+// CREATE RAZORPAY ORDER 
+
+
+
+const validateCart = async (cartId) => {
+    const cart = await cartSchema.findById(cartId).populate("items.product");
+    if (!cart) throw new Error("Cart not found");
+
+    const issues = [];
+    cart.items.forEach(item => {
+        if (item.product.stock < item.quantity) {
+            issues.push(`${item.product.productName} has insufficient stock (${item.product.stock} available)`);
+        }
+        if (item.product.isBlocked) {
+            issues.push(`${item.product.productName} is not available and cannot be purchased`);
+        }
+        if (item.product.stock === 0) {
+            issues.push(`${item.product.productName} is out of stock`);
+        }
+    });
+
+    if (issues.length > 0) {
+        throw new Error(`Cart validation failed: ${issues.join(", ")}`);
+    }
+
+    return cart;
+};
+
+const validateOrder = async (orderId) => {
+    const order = await orderSchema.findById(orderId).populate("items.product");
+    if (!order) throw new Error("Order not found");
+
+    const issues = [];
+    order.items.forEach(item => {
+        if (item.product.stock === 0) {
+            issues.push(`${item.product.productName} is out of stock`);
+        } else if (item.product.stock < item.quantity) {
+            issues.push(`${item.product.productName} has insufficient stock (${item.product.stock} available)`);
+        }
+    });
+
+    if (issues.length > 0) {
+        throw new Error(`Order validation failed: ${issues.join(", ")}`);
+    }
+
+    return order;
+};
+
+
+const calculatePayableAmount = (SubtotalAmount, coupon, shippingCharges, payableAmount) => {
+    return coupon ? payableAmount : Number(SubtotalAmount) + shippingCharges;
+};
+
+
+
+const createRazorpayOrder = async (amount) => {
+    try {
+        const razorpayOrder = await razorpayInstance.orders.create({
+            amount: amount * 100,
+            currency: 'INR',
+            receipt: `receipt_${Date.now()}`,
+        });
+        return razorpayOrder;
+    } catch (error) {
+        console.error("Razorpay order creation failed:", error);
+        throw new Error("Failed to create Razorpay order");
+    }
+};
+
+
 exports.razorpay = async (req, res) => {
     try {
-
         console.log("Place order request received");
 
-
-        const { cartId, PayableAmount, SubtotalAmount, couponId } = req.body;
-
-
-        let shippingCharges = 40;
-
+        const { cartId, PayableAmount, SubtotalAmount, couponId, orderId } = req.body;
+        const shippingCharges = 40;
 
         const coupon = couponId && await couponSchema.findById(couponId);
 
-        const cart = await cartSchema.findById(cartId).populate("items.product");
-
-        console.log("this is the razorpaycartttt",cart);
-
-        if(!cart){
-            res.status(400).json({success:false, message:"Cart not found"})
+        let validatedData;
+        if (cartId) {
+            validatedData = await validateCart(cartId);
+        } else if (orderId) {
+            validatedData = await validateOrder(orderId);
+        } else {
+            return res.status(400).json({ success: false, message: "Either cartId or orderId is required" });
         }
 
-        cart.items.forEach((item)=>{
+        const payableAmount = calculatePayableAmount(SubtotalAmount, coupon, shippingCharges, PayableAmount);
 
-            console.log("this is the product stock ",item.product.stock)
-            if(item.product.stock==0){
-                return res.status(400).json({success:false, message:` ${item.product.productName} This Product is out of stock not available` , text : "Please select another product"});
-            }
-        })
-        
-        const payableAmount = coupon ? PayableAmount : Number(SubtotalAmount) + shippingCharges;
+        const razorpayOrder = await createRazorpayOrder(payableAmount);
 
+        console.log("Razorpay order created:", razorpayOrder);
 
-        const razorpayOrder = await razorpayInstance.orders.create({
-            amount: payableAmount * 100,
-            currency: 'INR',
-            receipt: `receipt_${cartId}`,
-        });
-
-        console.log("Raaaaaaaazooooooo",razorpayOrder);
-        
-
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: 'Razorpay order created successfully',
             razorpayOrderId: razorpayOrder.id,
             payableAmount: payableAmount,
         });
 
-
-
     } catch (error) {
-        console.error("Razorpay error", error);
-        res.status(500).json({ success: false, message: "Internal server error" });
+        console.error("Error in Razorpay route:", error.message);
+        return res.status(error.message.includes("not found") ? 404 : 500).json({
+            success: false,
+            message: error.message || "Internal server error",
+        });
     }
 };
 
 
-exports.failure = async (req,res) =>{
-
-
-    console.log("Failure route is called");
-    
-
-    const {paymentResponse , response } = req.body;
-
-    console.log("Razorpay failure", response);
-
-    console.log("Razorpay payment response", paymentResponse);
-    
-    
-
-    console.log("This is the failure route");
-
-    console.log("This is my body",req.body);
-
-}
-
-
-
+// RAZORPAY CREATE ORDER END 
 
 exports.veryfy_razorpay_payment = async (req, res) => {
 
     try {
 
-        const { formData , failed } = req.body;
+        const { formData, failed } = req.body;
 
         console.log("this is my boadyyyyyyyyyyyy", req.body);
 
 
 
-        console.log("Verify Razorpay payment request received",failed);
+        console.log("Verify Razorpay payment request received", failed);
 
 
         const { selectedAddress, cartId, PayableAmount, paymentMethod, SubtotalAmount, couponId } = formData;
@@ -2081,7 +2257,7 @@ exports.veryfy_razorpay_payment = async (req, res) => {
             if (product.stock < cart.items.find(item => item.product.toString() === product._id.toString()).quantity) {
                 res.status(400).json({ success: false, message: "Product out of stocks " });
                 return;
-            } else {
+            } else if (!failed) {
                 product.stock = Math.max(0, product.stock - cart.items.find(item => item.product.toString() === product._id.toString()).quantity);
             }
 
@@ -2197,8 +2373,8 @@ exports.veryfy_razorpay_payment = async (req, res) => {
 
         console.log("Order placed successfully");
 
-        if(failed){
-            return res.status(400).json({success: false, message: "Your Payments Failed!"}); 
+        if (failed) {
+            return res.status(400).json({ success: false, message: "Your Payments Failed!" });
         }
 
         res.status(200).json({ success: true, message: "Order placed successfully", redirectUrl: "/order-success" });
@@ -2207,6 +2383,7 @@ exports.veryfy_razorpay_payment = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 }
+
 
 
 exports.invoice = async (req, res) => {
@@ -2218,37 +2395,85 @@ exports.invoice = async (req, res) => {
 
         const user = req.session.userData;
 
-        const  orderId  = req.params.id;
+        const orderId = req.params.id;
 
         console.log("This is the order id", orderId);
-        
 
-        const order = await orderSchema.find({_id :orderId}).populate("items.product").populate("address").populate("user");
 
-        console.log("This is the order", order);
 
-        const deliveredProducts = order[0].items.filter(item => item.orderStatus === "Delivered");
+        const order = await orderSchema.aggregate([
+    
+            { $match: { _id: new mongoose.Types.ObjectId(orderId) } },
+          
+            {
+              $lookup: {
+                from: "addresses", 
+                localField: "address", 
+                foreignField: "_id", 
+                as: "address" 
+              }
+            },
+            { $unwind: "$address" }, 
+          
 
-        let SubtotalAmount = 0 ;
-
-        for(let value of order[0].items){
-            if(value.orderStatus== "Delivered"){
-                SubtotalAmount+= value.price * value.quantity;
+            {
+              $lookup: {
+                from: "users", 
+                localField: "user", 
+                foreignField: "_id", 
+                as: "user" 
+              }
+            },
+            { $unwind: "$user" }, 
+          
+            { $unwind: "$items" },
+          
+            { $match: { "items.orderStatus": "Delivered" } },
+          
+            {
+              $addFields: {
+                "items.totalPrice": {
+                  $subtract: [
+                    { $multiply: ["$items.price", "$items.quantity"] }, 
+                    "$items.discount" 
+                  ]
+                }
+              }
+            },
+          
+            {
+              $group: {
+                _id: "$_id", 
+                deliveredProducts: { $push: "$items" }, 
+                totalAmountOfDeliveredProducts: { $sum: "$items.totalPrice" }, 
+                address: { $first: "$address" }, 
+                user: { $first: "$user" },
+                invoice: { $first: "$Invoice"},
+                orderDate: { $first: "$orderDate" }
+              }
+            },
+    
+            {
+              $project: {
+                _id: 0, 
+                deliveredProducts: 1,
+                totalAmountOfDeliveredProducts: 1,
+                address: 1, 
+                user: 1 ,
+                invoice : 1,
+                orderDate:1
+              }
             }
-        }
+          ]);
 
-        console.log("This is the subtotal",SubtotalAmount);
-        
 
-        console.log("This is the delivered products", deliveredProducts);
+      console.log("this is my orderrrrrrrrrr",order);
 
-        res.render("user/invoice",{
-            title : "Invoice",
-            layout : false,
+        res.render("user/invoice", {
+            title: "Invoice",
+            layout: false,
             user,
-            order,
-            deliveredProducts,
-            SubtotalAmount
+            order
         })
 
     } catch (error) {
@@ -2258,26 +2483,48 @@ exports.invoice = async (req, res) => {
 }
 
 
-exports.repayment = async (req,res)=>{
-    try{
+exports.repayment = async (req, res) => {
+    try {
 
-       const {orderId} = req.body;
+        const { orderId } = req.body;
 
-       const order = await orderSchema.findOneAndUpdate(
-        { _id: orderId }, 
-        { 
-            $set: { "items.$[].PaymentStatus": "Paid" } 
-        },
-        { new: true } 
-    );
+        const order = await orderSchema.findOneAndUpdate(
+            { _id: orderId },
+            {
+                $set: { "items.$[].PaymentStatus": "Paid" }
+            },
+            { new: true }
+        );
+
+        const productsIds = order.items.map(item => item.product);
+
+        const products = await Product.find({ _id: { $in: productsIds } });
 
 
-       console.log("Payment successfully");
-
-       res.status(200).json({success:true, message:"Payment Successfully"})
+        console.log("this is my product idsss", products);
 
 
-    }catch(error){
+
+        for (let product of products) {
+            if (product.stock < order.items.find(item => item.product.toString() === product._id.toString()).quantity) {
+                res.status(400).json({ success: false, message: "Product out of stocks " });
+                return;
+            } else {
+                product.stock = Math.max(0, product.stock - order.items.find(item => item.product.toString() === product._id.toString()).quantity);
+
+                console.log("afteeerrrrrrrr", product.stock);
+
+            }
+
+            await product.save();
+        }
+
+        console.log("Payment successfully");
+
+        res.status(200).json({ success: true, message: "Payment Successfully" })
+
+
+    } catch (error) {
 
     }
 }

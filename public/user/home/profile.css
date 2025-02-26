@@ -4,7 +4,7 @@
     padding: 20px;
     background: white;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);      
 }
 
 .profile-heading {
@@ -91,4 +91,12 @@ h3 {
 .referral-code-heading{
     margin-left: 9rem;
 }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
 

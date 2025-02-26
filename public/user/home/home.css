@@ -194,7 +194,7 @@ body {
   border: 1px solid #cce7d0;
   border-radius: 25px;
   cursor: pointer;
-  box-shadow: 13px 13px 54px rgba(0, 0, 0, 0.613);
+  box-shadow: 1px 4px 15px rgba(0, 0, 0, 0.613);
   margin: 15px 8px;
   transition: transform 0.3s ease-in-out;
   position: relative;
@@ -528,7 +528,7 @@ body {
 /* Blog Page */
 
 #page-header.blog-header {
-  background-image: url("./img/banner/b19.jpg");
+  background-image: url("https://i.pinimg.com/736x/af/02/a6/af02a6799fb3c9815e680976cf9d8043.jpg");
 }
 
 #blog {
@@ -627,7 +627,7 @@ body {
   text-align: center;
 }
 
-#about-app .video {
+/* #about-app .video {
   width: 70%;
   height: 100%;
   margin: 30px auto 0 auto;
@@ -637,7 +637,24 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 20px;
+} */
+
+.video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1; 
 }
+
+.video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
 
 /* Contact Page */
 
@@ -1291,3 +1308,48 @@ img {
   font-weight: bold;
 }
 
+#about-h2{
+  color: white;
+}
+
+#about-p{
+  color: white;
+}
+
+#about-abbr{
+  color: white;
+}
+
+#about-h1{
+  color: white;
+}
+
+
+#cart-images .image-container {
+  position: relative;
+ 
+}
+
+#cart-images .blocked-message {
+  position: absolute;
+    top: 28%;
+    left: 49%;
+    transform: translate(-49%, -52%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 8px;
+    font-size: 9px;
+    border-radius: 5px;
+}
+
+#cart-images .quantity-message {
+  position: absolute;
+    top: 28%;
+    left: 49%;
+    transform: translate(-49%, -52%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 9px 8px;
+    font-size: 6px;
+    border-radius: 5px;
+}

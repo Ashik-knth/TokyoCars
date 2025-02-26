@@ -127,7 +127,7 @@ exports.addproducts = async (req, res) => {
 
     } catch (error) {
         console.error('Error while adding product:', error);
-        return res.redirect('/pageerror');
+        
     }
 };
 
@@ -310,7 +310,7 @@ exports.statusChange = async (req, res) => {
 
     try {
 
-        const order = await orderSchema.findById(orderId);
+        let order = await orderSchema.findById(orderId);
 
         console.log("this is my orderrrrrrrrr",order);
         
@@ -337,7 +337,7 @@ exports.statusChange = async (req, res) => {
             return res.status(400).json({success:false, message: "User not found "});
         }
 
-        const wallet = await walletSchema.findOne({user:user._id});
+        let  wallet = await walletSchema.findOne({user:user._id});
 
         if(!wallet){
             wallet = new walletSchema({

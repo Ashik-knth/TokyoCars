@@ -38,7 +38,7 @@
                       <td><%= element.stock %></td>
                       <td><%= element.regularPrice %></td>
                       <td>
-                          <span class="product-status-badge">Active</span>
+                          <span class="product-status-badge"><%= element.isBlocked ? "In Active " : "Active" %></span>
                       </td>
                       <td>
                           <div class="product-action-buttons">

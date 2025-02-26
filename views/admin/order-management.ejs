@@ -19,7 +19,7 @@
                 <tbody>
                     <tr>
                         <td># <%= element.OrderId%></td>
-                        <td><%= element.user.username %></td>
+                        <td><%= element?.user?.username %></td>
                         <td><%= element.orderDate.toDateString() %></td>
                         <td><%= element.payableAmount %></td>
                         <td>
