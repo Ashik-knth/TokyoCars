@@ -111,18 +111,16 @@
                         <% } else{ %>
 
 
-                            <select class="order-status-select  <%= element.orderStatus == "Delivered" ? 'disabled' : '' %> "  
-
-                             
+                            <select class="order-status-select" <%=element.orderStatus==="Delivered" ? 'disabled' : '' %>
                                 onchange="handleOrderStatusChange(this.value, '<%= order._id %>', '<%= element.product._id %>')">
-                                <option value="<%= element.orderStatus %>" <%=element.orderStatus==='processing'  
-                                    ? 'selected' : '' %> %>>
-                                    <%= element.orderStatus %>
-                                </option>
-
-                                <option value="Shipped">Shipped</option>
-                                <option value="Delivered">Delivered</option>
-                                <option value="Cancelled">Cancelled</option>
+                            
+                                        <option value="<%= element.orderStatus %>" <%=element.orderStatus==='processing' ? 'selected' : '' %>>
+                                            <%= element.orderStatus %>
+                                        </option>
+                            
+                                        <option value="Shipped">Shipped</option>
+                                        <option value="Delivered">Delivered</option>
+                                        <option value="Cancelled">Cancelled</option>
                             </select>
 
 
@@ -132,8 +130,7 @@
 
                 </div>
 
-                <span class="order-detail-status" 
-">
+                <span class="order-detail-status">
                
                     <%= element.isReturnRequested ? (element.isAdminAcceptedReturn==='Accepted'
                         ? 'Return Request Accepted' : (element.isAdminAcceptedReturn==='Rejected'
