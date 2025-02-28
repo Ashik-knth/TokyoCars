@@ -111,10 +111,12 @@
                         <% } else{ %>
 
 
-                            <select class="order-status-select"  
+                            <select class="order-status-select  <%= element.orderStatus == "Delivered" ? 'disabled' : '' %> "  
+
+                             
                                 onchange="handleOrderStatusChange(this.value, '<%= order._id %>', '<%= element.product._id %>')">
-                                <option value="<%= element.orderStatus %>" <%=element.orderStatus==='processing'
-                                    ? 'selected' : '' %>>
+                                <option value="<%= element.orderStatus %>" <%=element.orderStatus==='processing'  
+                                    ? 'selected' : '' %> %>>
                                     <%= element.orderStatus %>
                                 </option>
 

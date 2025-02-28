@@ -142,8 +142,8 @@
                         </td>
                         <td>₹<%=parseInt(element.payableAmount) %>
                         </td>
-                        <td>
-                            <span class="<%= element.items[0].orderStatus === 'Delivered' ? 'status completed' : 
+                        <td   > 
+                            <span class="<%= element.items[0].orderStatus === 'Delivered' ? 'status completed'  : 
                                         element.items[0].orderStatus === 'Processing' ? 'status pending' : 
                                         element.items[0].orderStatus === 'Cancelled' ? 'status cancelled' : '' %>">
                                 <%= element.items[0].orderStatus %>
